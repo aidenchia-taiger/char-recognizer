@@ -4,11 +4,24 @@ import os
 import matplotlib.pyplot as plt
 import pdb
 
-def display(img):
-    img = np.array(img)
+def display(img, multiple=False,rows=3,cols=3):
     plt.rcParams["figure.figsize"] = [9, 6]
-    plt.imshow(img,'gray')
-    plt.show()
+    if multiple: # img is a list of imgs
+        fig=plt.figure(figsize=(8, 8))
+        for i in range(1, cols * rows + 1):
+            fig.add_subplot(rows, cols, i)
+            image = img[i]
+            if image.ndim == 3:
+                image = np.squeeze(image)
+            plt.imshow(image)
+        plt.show()
+
+    else:
+        img = np.array(img)
+        if img.ndim == 3:
+            img = np.squeeze(img)
+        plt.imshow(img,'gray')
+        plt.show()
 
 def save(img, name, prefix=None, suffix=None):
     if prefix:
@@ -21,6 +34,8 @@ def save(img, name, prefix=None, suffix=None):
     cv2.imwrite(name, img)
 
 def is_binary(img):
+    if type(img) == str:
+        img = cv2.imread(img)
     return np.array_equal(np.unique(img), np.array([0, 255])) or np.array_equal(np.unique(img), np.array([0, 1]))
 
 def printInfo(img):

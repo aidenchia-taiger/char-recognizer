@@ -1,4 +1,7 @@
 imgs/
 out/
 backup/
-
+models/
+logs/
+sample_imgs/
+analysis/

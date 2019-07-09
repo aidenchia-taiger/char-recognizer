@@ -28,6 +28,8 @@ def main():
 				 numFilters=[8,16,32,64], kernelVals=[4,4,4,4], poolVals=[2,2,2,1], strideVals=[1,1,1,1],
 				 learningRate=0.01, numEpochs=50)
 	
+	segmenter = Segmenter()
+	
 	if args.train:
 		model = mf.build()
 		mf.train(model)
@@ -37,8 +39,6 @@ def main():
 		model = mf.build()
 		model.load_weights(args.model)
 		print('[INFO] Load model from {}'.format(args.model))
-
-		segmenter = Segmenter()
 
 		pred = ""
 		if os.path.isdir(args.infer):

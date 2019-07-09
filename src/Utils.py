@@ -18,7 +18,10 @@ def display(img, multiple=False,rows=3,cols=3):
 
     else:
         img = np.array(img)
-        if img.ndim == 3:
+        if img.ndim == 4:
+            img = np.squeeze(img, axis=0)
+            img = np.squeeze(img, axis=-1)
+        elif img.ndim == 3:
             img = np.squeeze(img)
         plt.imshow(img,'gray')
         plt.show()
@@ -50,3 +53,5 @@ def makeDir(directory):
 def percentageBlack(img):
     numWhite = np.count_nonzero(img)
     return 1 - numWhite * 100 / img.size
+
+

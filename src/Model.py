@@ -14,8 +14,8 @@ import datetime
 import os
 
 class ModelFactory:
-	def __init__(self, modelName='model', batchSize=32, numClasses=53, imgSize=(28,28,1), dropoutRatio=0.6,
-				 numFilters=[16,32,64], kernelVals=[4,4,4], poolVals=[2,2,2], strideVals=[1,1,1],
+	def __init__(self, modelName="model", batchSize=32, numClasses=53, imgSize=(28,28,1), dropoutRatio=0.0,
+				 numFilters=[8,16,32,64,128,256], kernelVals=[3,3,3,5,5,5], poolVals=[2,2,2,1,1,1], strideVals=[1,1,1,1,1,1],
 				 learningRate=0.01, numEpochs=50):
 		self.dropoutRatio = dropoutRatio
 		self.learningRate = learningRate
@@ -29,8 +29,8 @@ class ModelFactory:
 		self.strideVals = strideVals
 		self.modelName = modelName
 		self.mapping = self.getMapping()
-		self.logpath = os.path.join('../logs', datetime.datetime.now().strftime("Time_%H%M_Date_%d-%m")) + "_" + self.modelName
-		self.savepath = os.path.join('../models', self.modelName) + '.h5'
+		self.logpath = os.path.join('../logs', datetime.datetime.now().strftime("Time_%H%M_Date_%d-%m")) + "_" + self.modelName.split('/')[-1]
+		self.savepath = modelName
 		[print('[INFO] {}: {}'.format(k,v)) for k, v in dict(vars(self)).items()]
 
 	def build(self):
@@ -38,6 +38,10 @@ class ModelFactory:
 		
 		inputs = Input(shape=(self.imgSize))
 		x = Conv2D(filters=self.numFilters[0], padding='SAME', kernel_size=self.kernelVals[0], strides=self.strideVals[0])(inputs)
+		x = BatchNormalization()(x)
+		x = Activation('relu')(x)
+		x = MaxPooling2D(self.poolVals[0])(x)
+
 		for i in range(1, numCNNlayers):
 			x = Conv2D(filters=self.numFilters[i], padding='SAME', kernel_size=self.kernelVals[i], strides=self.strideVals[i])(x)
 			x = BatchNormalization()(x)
@@ -46,7 +50,7 @@ class ModelFactory:
 
 		x = Flatten()(x)
 		x = Dense(128, activation='relu')(x)
-		x = Dropout(0.0)(x)
+		x = Dropout(self.dropoutRatio)(x)
 		outputs = Dense(self.numClasses, activation='softmax')(x)
 
 		model = Model(inputs=inputs, outputs=outputs)
@@ -73,8 +77,8 @@ class ModelFactory:
 		tensorboard = TensorBoard(self.logpath, batch_size=self.batchSize)
 		reduceLR = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=5, min_lr=0.001, min_delta=0.0001)
 		callbacks = [checkpoint, tensorboard, reduceLR]
-		model.fit_generator(train_generator, steps_per_epoch= len(train_generator) / self.batchSize, 
-							validation_data=valid_generator, validation_steps= len(valid_generator),
+		model.fit_generator(train_generator, steps_per_epoch= train_generator.n // self.batchSize, 
+							validation_data=valid_generator, validation_steps= valid_generator.n // self.batchSize,
 							epochs=self.numEpochs, callbacks=callbacks)
 
 	def save(self, model):
@@ -97,11 +101,12 @@ class ModelFactory:
 		inv_mapping = {v:k for k,v in mapping.items()}
 		return inv_mapping
 
-	def preprocess(self, img):
+	def preprocess(self, img, show=True):
 		# invert colours if black text on white bg
 		img = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY_INV)[-1] if percentageBlack(img) < 50 else img
 		img = cv2.resize(img, (self.imgSize[0], self.imgSize[1]))
-		display(img)
+		if show:
+			display(img)
 		img = np.expand_dims(img, axis=0)
 		img = np.expand_dims(img, axis=-1)
 		img = img.astype(np.float32) / 255.0

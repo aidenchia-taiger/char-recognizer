@@ -8,9 +8,14 @@ from Utils import display, save, is_binary, printInfo, makeDir, percentageBlack
 from Denoiser import Denoiser
 
 class Segmenter:
-    def segment(self, imgpath, minArea= 10, minHeightWidthRatio=1.1, write_to_dir=False):
-        print('[INFO] Segmenting img: {}'.format(imgpath))
-        img = cv2.imread(imgpath, cv2.IMREAD_GRAYSCALE)
+    def __init__(self):
+        self.numCharacters = 0
+
+    def segment(self, img, minArea= 10, minHeightWidthRatio=1.1, write_to_dir=False):
+        if type(img) == str:
+            print('[INFO] Segmenting img: {}'.format(img))
+            img = cv2.imread(img, cv2.IMREAD_GRAYSCALE)
+
         inv = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY_INV)[-1]
         if cv2.__version__[0] == '3':
             contours = cv2.findContours(inv, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[1]
@@ -19,19 +24,18 @@ class Segmenter:
         
         contours = sorted(contours, key=lambda ctr: cv2.boundingRect(ctr)[0]) # sort by x coordinate
 
-        numCharacters = 0
         rois = []
         for ctr in contours:
             x, y, w, h = cv2.boundingRect(ctr)
             roi = img[y:y+h, x:x+w]
             if w*h > minArea:
-                numCharacters += 1
+                self.numCharacters += 1
                 rois.append(roi)
                 if write_to_dir:
-                    save(roi, name= str(numCharacters), prefix='../out/' + imgpath[:-4].split('/')[-1], suffix='.png')
+                    save(roi, name= str(numCharacters), prefix='../out/' + img[:-4].split('/')[-1], suffix='.png')
 
-        #save(img, name='original', prefix='../out/' + imgpath[:-4].split('/')[-1], suffix='.png')
-        print('[INFO] No. of Characters Found: {}'.format(numCharacters))
+        #save(img, name='original', prefix='../out/' + img[:-4].split('/')[-1], suffix='.png')
+        print('[INFO] No. of Characters Found: {}'.format(self.numCharacters))
         return rois
 
 def main():
@@ -46,7 +50,7 @@ def main():
         [segmenter.segment(x) for x in imgFiles]
     
     else:
-        segmenter.segment(imgpath=args.i, write_to_dir=args.o)
+        segmenter.segment(img=args.i, write_to_dir=args.o)
 
 if __name__ == '__main__':
     main()

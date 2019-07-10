@@ -3,8 +3,10 @@ from Model import ModelFactory
 import os
 import keras
 from keras.preprocessing.image import ImageDataGenerator
+from keras import backend as K
 import editdistance
 import numpy as np
+import tensorflow as tf
 import cv2
 import pdb
 from Utils import display, percentageBlack
@@ -17,27 +19,34 @@ def main():
 	parser.add_argument('--test', help='test the NN with a batch of images')
 	parser.add_argument('--infer', help="infer a directory of images or single image")
 	parser.add_argument('--model', help='select the model to use')
+	parser.add_argument('--serve', help='launch web UI for demo', action='store_true')
 	args = parser.parse_args()
 
-	if args.model == None:
-		args.model = 'model'
-	else:
-		args.model = os.path.join('../models', args.model) + '.h5'
+	config = tf.ConfigProto()
+	config.gpu_options.allow_growth = True
+	sess = tf.Session(config=config)
+	K.set_session(sess)
 
-	mf = ModelFactory(modelName=args.model, batchSize=32, numClasses=53, imgSize=(32,32,1), dropoutRatio=0.6,
-				 numFilters=[8,16,32,64], kernelVals=[4,4,4,4], poolVals=[2,2,2,1], strideVals=[1,1,1,1],
+	if args.model[0:2] != '..':
+		args.model = os.path.join('../models', args.model)
+
+	if args.model[-3:] != '.h5':
+		args.model += '.h5'
+
+	mf = ModelFactory(modelName=args.model, batchSize=32, numClasses=53, imgSize=(28,28,1), dropoutRatio=0.0,
+				 numFilters=[8,16,32,64,128,256], kernelVals=[3,3,3,5,5,5], poolVals=[2,2,2,1,1,1], strideVals=[1,1,1,1,1,1],
 				 learningRate=0.01, numEpochs=50)
 	
 	segmenter = Segmenter()
-	
+
 	if args.train:
 		model = mf.build()
 		mf.train(model)
 		mf.save(model)
 
 	elif args.infer:
-		model = mf.build()
-		model.load_weights(args.model)
+		'Infer on a single word / character image'
+		model = load_model(args.model)
 		print('[INFO] Load model from {}'.format(args.model))
 
 		pred = ""
@@ -60,8 +69,8 @@ def main():
 				prediction = predict(mf.mapping, model, img)
 		
 	elif args.test:
-		model = mf.build()
-		model.load_weights(args.model)
+		'Test the model on a directory of character images'
+		model = load_model(args.model)
 		print('[INFO] Load model from {}'.format(args.model))
 
 		imgFiles = []
@@ -78,6 +87,36 @@ def main():
 			img = mf.preprocess(img)
 			prediction = predict(mf.mapping, model, img)
 
+	elif args.serve:
+		from flask import Flask, render_template, request
+		from PIL import Image
+		import io
+		
+		app = Flask(__name__)
+
+		model = load_model(args.model)
+		print('[INFO] Load model from {}'.format(args.model))
+		graph = tf.get_default_graph()
+
+		@app.route('/', methods=['GET', 'POST'])
+		def upload():
+			return render_template('upload.html')
+
+		@app.route('/predict', methods=['GET', 'POST'])
+		def predict_display():
+			if request.method == 'POST' or request.method=='GET':
+				with graph.as_default():
+					img = np.array(Image.open(io.BytesIO(request.files['image'].read())).convert('L'))
+					imgs = segmenter.segment(img)
+					pred = ""
+					for img in imgs:
+						img = mf.preprocess(img, False)
+						prediction = predict(mf.mapping, model, img)
+						pred += prediction
+					return render_template('predict.html', pred=pred, orig='../sample_imgs/ABISHEK.png')
+			return 'Please upload an image'
+
+		app.run(debug=True)
 
 def predict(mapping, model, img, batch_size=1, verbose=1):
 	prediction = mapping[np.argmax(model.predict(img, batch_size=1, verbose=1))]

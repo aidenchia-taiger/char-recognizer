@@ -14,13 +14,13 @@ Handwriting Recognition Model is a deep Convolutional Neural Network written in 
 ## Getting Started
 ---
 
-### Prerequisites
+### Environment
 - Ubuntu 16.04
 - Python 3.5.2
 - Keras 2.2.4
 - tensorflow-gpu 1.12.0
 
-### Setup
+### Prerequisites
 Run in Terminal (setup your own virtualenv):
 `pip install -r requirements.txt` 
 

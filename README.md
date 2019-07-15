@@ -13,15 +13,12 @@ This is a model that recognizes handwritten characters in a given document. The 
 
 Handwriting Recognition Model is a deep Convolutional Neural Network written in Keras. Please refer to the Confluence [page](https://taiger.atlassian.net/wiki/spaces/NLP/pages/693600765/Word+Recognition+with+Explicit+Character+Segmentation?atlOrigin=eyJpIjoiOTA1YWFmOGUxNDQ4NDk5ZThkZTJlMWUzNTdhNjZlYjYiLCJwIjoiYyJ9) for a full explanation.
 
-
-
 ## Getting Started
 
 ### Environment
 - Ubuntu 16.04
 - Python 3.5.2
-- Keras 2.2.4
-- tensorflow-gpu 1.12.0
+- NVIDIA GeForce GTX 1070 GPU
 
 ### Prerequisites
 Run in Terminal (setup your own virtualenv):

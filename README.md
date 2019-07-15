@@ -21,7 +21,7 @@ Handwriting Recognition Model is a deep Convolutional Neural Network written in 
 - NVIDIA GeForce GTX 1070 GPU
 
 ### Prerequisites
-Run in Terminal (setup your own virtualenv):
+Run in Terminal (setup your own virtualenv):   
 `pip install -r requirements.txt` 
 
 ### Train model

@@ -9,11 +9,18 @@ This is a model that recognizes handwritten characters in a given document. Plea
 - Keras 2.2.4
 - tensorflow-gpu 1.12.0
 
-## Train the Model
+## Train
 ---
+Run in Terminal:
 `python3 train.py`
 
-## Test the Model
+## Test
 ---
+Run in Terminal:
 `python3 test.py`
+
+## Demo (Flask UI)
+---
+Run in Terminal:
+`python3 app.py`
 

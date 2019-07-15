@@ -6,4 +6,4 @@ logs/
 sample_imgs/
 analysis/
 *.hocr
-*.txt
+userconfig.txt

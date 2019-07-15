@@ -25,7 +25,7 @@ Run in Terminal (setup your own virtualenv):
 `pip install -r requirements.txt` 
 
 ## Train
-Run in Terminal:
+Under `src` directory:
 `python3 train.py`
 
 ## Test

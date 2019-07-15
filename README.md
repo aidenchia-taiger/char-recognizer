@@ -45,6 +45,7 @@ Under `src` directory:
 ### Demo (Flask UI)
 Under `src` directory:    
 `python3 app.py --model MODEL_NAME`    
+
 `MODEL_NAME` should be the name of a trained model under the `../models` directory.
 
 ## Author

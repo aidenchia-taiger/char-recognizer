@@ -28,7 +28,7 @@ Run in Terminal (setup your own virtualenv):
 Under `src` directory:   
 `python3 train.py --model MODEL_NAME`   
 
-The images used for training should be placed under `../imgs/train`, and those used for validation should be placed under `../imgs/validation`. You can configure the no. of epochs, learning rate, dropout rate, and batch size by specifying the necessary command line args. While training, you can view progress on Tensorboard. Saved model will be automatically saved as ../models/MODEL_NAME.h5.
+The images used for training should be placed under `../imgs/train`, and those used for validation should be placed under `../imgs/validation`. While training, you can view progress on Tensorboard. Saved model will be automatically saved as ../models/MODEL_NAME.h5.
 
 ### Test on a directory of character images
 Under `src` directory:   
@@ -53,10 +53,12 @@ Aiden Chia
 ## Things to Note
 ---
 1. The `--model` command line argument should be the name of a model, not a path. Suppose `alpha.h5` is a model under the `models` directory, then the correct command line argument should be `--model alpha`, NOT `--model ../alpha.h5` or `--model alpha.h5`
+2. You can check all command line arguments for each file by specifying `-h`
+3. The `test.py` file is used to test the performance of the CNN itself, and hence it will not work on a directory of word or document images
 
 ## Todo
 ---
 - Accept document as input and applies some pre-processing & denoising
 - Classifies all cropped out sub-images as either handwritten or digital
 - Output is concatenated together and post-processed by a language model
-
+- Implement evaluation for `test.py` file

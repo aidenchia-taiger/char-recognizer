@@ -10,7 +10,7 @@ This is a model that recognizes handwritten characters in a given document. The 
 6. Output is concatenated together and post-processed by a language model (not done yet)
 7. All predictions are written to a standard HOCR file format
 
-Please refer to the Confluence [page](https://taiger.atlassian.net/wiki/spaces/NLP/pages/693600765/Word+Recognition+with+Explicit+Character+Segmentation?atlOrigin=eyJpIjoiOTA1YWFmOGUxNDQ4NDk5ZThkZTJlMWUzNTdhNjZlYjYiLCJwIjoiYyJ9) for full explanation.
+Model is written in Keras. Please refer to the Confluence [page](https://taiger.atlassian.net/wiki/spaces/NLP/pages/693600765/Word+Recognition+with+Explicit+Character+Segmentation?atlOrigin=eyJpIjoiOTA1YWFmOGUxNDQ4NDk5ZThkZTJlMWUzNTdhNjZlYjYiLCJwIjoiYyJ9) for full explanation.
 
 ## Environment
 - Ubuntu 16.04

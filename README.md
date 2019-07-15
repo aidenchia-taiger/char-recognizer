@@ -28,7 +28,7 @@ Run in Terminal (setup your own virtualenv):
 Under `src` directory:   
 `python3 train.py --model MODEL_NAME`   
 
-The images used for training should be placed under `../imgs/train`, and those used for validation should be placed under `../imgs/validation`. While training, you can view progress on Tensorboard. Saved model will be automatically saved as ../models/MODEL_NAME.h5.
+The images used for training should be placed under `../imgs/train`, and those used for validation should be placed under `../imgs/validation`. While training, you can view progress on Tensorboard. Saved model will be automatically saved as `../models/MODEL_NAME.h5`.
 
 ### Test on a directory of character images
 Under `src` directory:   

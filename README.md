@@ -60,8 +60,9 @@ Under `src` directory:
 - The `test.py` file is used to test the performance of the handwritten recognition alone, and hence it will not work on a directory of word or document images
 
 ## Authors
-Aiden Chia  
-You may reach me via Slack or email: aiden_chia@mymail.sutd.edu.sg
+Aiden Chia, R&D Engineer, Taiger SG        
+You may reach me via Slack or email: aiden_chia@mymail.sutd.edu.sg   
+This is an individual project done during my 3-month internship with Taiger SG. My direct supervisor was Abishek Pradhan.   
 
 ## Todo
 - Accept document as input and applies some pre-processing & denoising

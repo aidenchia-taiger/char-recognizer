@@ -1,7 +1,7 @@
 # Character-Level Model for Handwriting Recognition
 
 ## Background
-![Text Detected](https://github.com/aidenchia-taiger/char-recognizer/blob/master/figures/textDetected.png)   
+![Text Detected](https://github.com/aidenchia-taiger/char-recognizer/blob/master/figures/otp.png)   
 This is a model that recognizes handwritten characters in a given document. The full pipeline is as follows:
 1. Accept document as input and applies some pre-processing & denoising (not done yet) 
 2. Detects text in document & crops them out as sub-images

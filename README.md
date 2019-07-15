@@ -9,11 +9,10 @@ This is a model that recognizes handwritten characters in a given document. The 
 6. Output is concatenated together and post-processed by a language model (not done yet)
 7. All predictions are written to a standard HOCR file format
 
+Model is written in Keras. Please refer to the Confluence [page](https://taiger.atlassian.net/wiki/spaces/NLP/pages/693600765/Word+Recognition+with+Explicit+Character+Segmentation?atlOrigin=eyJpIjoiOTA1YWFmOGUxNDQ4NDk5ZThkZTJlMWUzNTdhNjZlYjYiLCJwIjoiYyJ9) for full explanation.
+
 ## Getting Started
 ---
-
-
-Model is written in Keras. Please refer to the Confluence [page](https://taiger.atlassian.net/wiki/spaces/NLP/pages/693600765/Word+Recognition+with+Explicit+Character+Segmentation?atlOrigin=eyJpIjoiOTA1YWFmOGUxNDQ4NDk5ZThkZTJlMWUzNTdhNjZlYjYiLCJwIjoiYyJ9) for full explanation.
 
 ### Prerequisites
 - Ubuntu 16.04
@@ -21,9 +20,9 @@ Model is written in Keras. Please refer to the Confluence [page](https://taiger.
 - Keras 2.2.4
 - tensorflow-gpu 1.12.0
 
-## Setup
+### Setup
 Run in Terminal (setup your own virtualenv):
-`pip install requirements.txt` 
+`pip install -r requirements.txt` 
 
 ## Train
 ---

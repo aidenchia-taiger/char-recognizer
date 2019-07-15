@@ -39,7 +39,7 @@ Run in Terminal:
 ## Author
 Aiden Chia
 
-## TODO
+## Todo
 ---
 - Accept document as input and applies some pre-processing & denoising
 - Classifies all cropped out sub-images as either handwritten or digital

@@ -1,4 +1,6 @@
 # Character-Level Model for Handwriting Recognition
+
+## Background
 ---
 This is a model that recognizes handwritten characters in a given document. The full pipeline is as follows:
 1. Accept document as input and applies some pre-processing & denoising (not done yet) 
@@ -50,14 +52,14 @@ Under `src` directory:
 
 `MODEL_NAME` should be the name of a trained model under the `../models` directory.
 
-## Author
-Aiden Chia
-You may reach me via Slack.
-
-## Things to Note
+### Things to Note
 1. The `--model` command line argument should be the name of a model, not a path. Suppose `alpha.h5` is a model under the `models` directory, then the correct command line argument should be `--model alpha`, NOT `--model ../alpha.h5` or `--model alpha.h5`
 2. You can check all command line arguments for each file by specifying `-h`
 3. The `test.py` file is used to test the performance of the CNN itself, and hence it will not work on a directory of word or document images
+
+## Author
+Aiden Chia
+You may reach me via Slack.
 
 ## Todo
 ---

@@ -25,22 +25,18 @@ Run in Terminal (setup your own virtualenv):
 `pip install -r requirements.txt` 
 
 ## Train
----
 Run in Terminal:
 `python3 train.py`
 
 ## Test
----
 Run in Terminal:
 `python3 test.py`
 
 ## Demo (Flask UI)
----
 Run in Terminal:
 `python3 app.py`
 
 ## Author
----
 Aiden Chia
 
 ## TODO

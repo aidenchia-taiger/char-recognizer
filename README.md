@@ -11,6 +11,8 @@ This is a model that recognizes handwritten characters in a given document. The 
 
 Handwriting Recognition Model is a deep Convolutional Neural Network written in Keras. Please refer to the Confluence [page](https://taiger.atlassian.net/wiki/spaces/NLP/pages/693600765/Word+Recognition+with+Explicit+Character+Segmentation?atlOrigin=eyJpIjoiOTA1YWFmOGUxNDQ4NDk5ZThkZTJlMWUzNTdhNjZlYjYiLCJwIjoiYyJ9) for a full explanation.
 
+
+
 ## Getting Started
 ---
 

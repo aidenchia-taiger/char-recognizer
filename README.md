@@ -54,7 +54,7 @@ Under `src` directory:
 - The `test.py` file is used to test the performance of the CNN itself, and hence it will not work on a directory of word or document images
 
 ## Authors
-- Aiden Chia 
+- Aiden Chia    
 You may reach me via Slack or email: aiden_chia@mymail.sutd.edu.sg
 
 ## Todo

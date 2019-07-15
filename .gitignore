@@ -1,9 +1,13 @@
-imgs/
+imgs/*
+!imgs/.gitkeep
 out/
 original_data/
-models/
-logs/
-sample_imgs/
+models/*
+!models/.gitkeep
+logs/*
+!logs/.gitkeep
+sample_imgs/*
+!sample_imgs/.gitkeep
 analysis/
 *.hocr
 userconfig.txt

@@ -22,7 +22,13 @@ Handwriting Recognition Model is a deep Convolutional Neural Network written in 
 
 ### Prerequisites
 Run in Terminal (setup your own virtualenv):   
-`pip install -r requirements.txt` 
+`pip install -r requirements.txt`
+
+### Downloads
+You may download the following from [Google Drive] (https://drive.google.com/drive/folders/1TxYakcaLqdLJRBXTzo-oXzqCn4OIT_7f?usp=sharing). If the link is broken, please check with Abishek Pradhan on where you can get the following files.
+- Pre-trained handwritten recognition model named `beta.h5`   
+- Pre-trained EAST text detection model named `frozen_east_text_detection.pb`   
+- Mapping from class indices to labels pickle file named `mapping.pkl`   
 
 ### Train model
 Under `src` directory:   

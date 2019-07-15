@@ -2,7 +2,7 @@
 
 ## Background
 ![Example Document](https://github.com/aidenchia-taiger/char-recognizer/blob/master/figures/otp.png)   
-This is a model that recognizes handwritten characters in a given document. The full pipeline is as follows:
+This is a model that recognizes handwritten characters in a given document, such as the one above. The full pipeline is as follows:
 1. Accept document as input and applies some pre-processing & denoising (not done yet) 
 2. Detects text in document & crops them out as sub-images
 3. Classifies all cropped out sub-images as either handwritten text, digital text, or just noise (not done yet)

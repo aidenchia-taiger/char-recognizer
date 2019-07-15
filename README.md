@@ -53,8 +53,8 @@ Under `src` directory:
 - Each file has multiple command line arguments some of which are optional. Use `-h` to inspect all.
 - The `test.py` file is used to test the performance of the CNN itself, and hence it will not work on a directory of word or document images
 
-## Author
-**Aiden Chia**  
+## Authors
+- Aiden Chia 
 You may reach me via Slack or email: aiden_chia@mymail.sutd.edu.sg
 
 ## Todo

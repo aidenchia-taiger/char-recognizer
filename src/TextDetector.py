@@ -13,11 +13,12 @@ class TextDetector:
 		self.minConfidence = minConfidence
 		self.net = cv2.dnn.readNet(modelpath)
 
-	def detect(self, img):
+	def detect(self, img, show=True):
 		self.orig = img.copy()
+		self.gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 		resized = self.resize(img)
 		bboxes = self.getBBoxes(resized)
-		cropped = self.cropBBoxes(bboxes)
+		cropped = self.cropBBoxes(bboxes, show)
 
 		return cropped
 
@@ -77,7 +78,7 @@ class TextDetector:
 		bboxes = non_max_suppression(np.array(rects), probs=confidences)
 		return bboxes
 
-	def cropBBoxes(self, bboxes):
+	def cropBBoxes(self, bboxes, show=True):
 		cropped = []
 		for (startX, startY, endX, endY) in bboxes:
 			# scale the bounding box coordinates based on the respective ratios
@@ -87,14 +88,17 @@ class TextDetector:
 			endY = int(endY * self.rH)
 
 			cv2.rectangle(self.orig, (startX, startY), (endX, endY), (0, 255, 0), 2)
-			cropped.append(self.orig[startY:endY,startX:endX])
+			crop = self.gray[startY:endY,startX:endX]
+			coord = (startX, startY, endX, endY)
+			cropped.append((crop, coord))
 
 		# show the output image
-		cv2.imshow("Text Detection", self.orig)
-		cv2.waitKey(0)
+		if show:
+			cv2.imshow("Text Detection", self.orig)
+			cv2.waitKey(0)
 		return cropped
 
 if __name__ == "__main__":
 	td = TextDetector()
-	img = cv2.imread('../sample_imgs/otp.png')
+	img = cv2.imread('../sample_imgs/AIDEN.png')
 	td.detect(img)

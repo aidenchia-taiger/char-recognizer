@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import pandas as pd
 import os
 import matplotlib.pyplot as plt
 import pdb
@@ -53,5 +54,29 @@ def makeDir(directory):
 def percentageBlack(img):
     numWhite = np.count_nonzero(img)
     return 1 - numWhite * 100 / img.size
+
+def outputHOCR(result, filename):
+    numBins = getBins(result['top'])
+    print(numBins)
+    bins = pd.cut(result['top'], 5)
+    result['modified_top'] = bins
+    result = result.sort_values(["modified_top", "left"])
+    print(result)
+    f = open(filename, 'w+')
+    for i, row in result.iterrows():
+        f.write("<span class=ocrx_word title='bbox {} {} {} {};'>{}</span>\n".format(row['left'], row['top'], row['width'], row['height'], row['text']))
+    
+    f.close()
+
+def getBins(series):
+    numBuckets = 1
+    series = series.sort_values(ascending=True)
+    jump = series.min()
+    for i in series:
+            numBuckets += 1
+            jump = i
+
+    #print('[INFO] No. of Buckets = {}'.format(numBuckets))
+    return numBuckets
 
 

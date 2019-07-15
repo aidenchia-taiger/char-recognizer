@@ -1,17 +1,20 @@
 import keras
 from keras.preprocessing.image import ImageDataGenerator
-from keras.models import Model
+from keras.models import Model, load_model
 from keras.layers import Input, MaxPooling2D, Dense, Conv2D, Flatten, Dropout, Activation, BatchNormalization
 from keras.activations import softmax, relu, sigmoid
 from keras.losses import categorical_crossentropy
 from keras.callbacks import TensorBoard, ModelCheckpoint, ReduceLROnPlateau
-from Utils import display, save, percentageBlack
 from keras.optimizers import Adam
 import numpy as np
 import cv2
-from Utils import display, save
+import pandas as pd
 import datetime
+import editdistance
 import os
+from Utils import display, save, percentageBlack
+from Segmenter import Segmenter
+from TextDetector import TextDetector
 
 class ModelFactory:
 	def __init__(self, modelName="model", batchSize=32, numClasses=53, imgSize=(28,28,1), dropoutRatio=0.0,
@@ -30,7 +33,7 @@ class ModelFactory:
 		self.modelName = modelName
 		self.mapping = self.getMapping()
 		self.logpath = os.path.join('../logs', datetime.datetime.now().strftime("Time_%H%M_Date_%d-%m")) + "_" + self.modelName.split('/')[-1]
-		self.savepath = modelName
+		self.savepath = os.path.join('../models', modelName) + '.h5'
 		[print('[INFO] {}: {}'.format(k,v)) for k, v in dict(vars(self)).items()]
 
 	def build(self):
@@ -113,6 +116,46 @@ class ModelFactory:
 
 		return img
 
+	def predictChar(self, model, charImg):
+		prediction = self.mapping[np.argmax(model.predict(charImg, batch_size=1, verbose=1))]
+		print('[INFO] Predicted: {}'.format(prediction))
+		return prediction
+
+	def predictWord(self, model, segmenter, wordImg, show=True):
+		if show:
+			display(wordImg)
+		charImgs = segmenter.segment(wordImg)
+		pred = ""
+		for charImg in charImgs:
+			charImg = self.preprocess(charImg, show)
+			prediction = self.predictChar(model, charImg)
+			pred += prediction
+
+		return pred
+
+	def predictDoc(self, model, segmenter, textDetector, docImg, showCrop=True, showChar=True):
+		result = {"text": [], "top": [], "left": [], "width": [], "height": []}
+		croptexts = textDetector.detect(docImg, show=showCrop)
+		for crop in croptexts:
+			wordImg, coord = crop
+			left, top, right, bot = coord 
+			pred = self.predictWord(model, segmenter, wordImg, show=showChar)
+			print('Pred: {} | Coord: {}'.format(pred, coord))
+			result["text"].append(pred)
+			result["top"].append(top)
+			result["left"].append(left)
+			result["width"].append(right - left)
+			result["height"].append(bot - top)
+
+		result = pd.DataFrame.from_dict(result)
+		return result
+
+	def getCER(self, pred, gt):
+		cer = editdistance.eval(pred, gt) * 100/ len(gt)
+		print("[INFO] Ground Truth: {} | Predicted: {}".format(pred, gt))
+		print("[INFO] Character Error Rate: {:.1f}%".format(cer))
+
+		return cer
 
 if __name__ == '__main__':
 	mf = ModelFactory()

@@ -1,7 +1,9 @@
 imgs/
 out/
-backup/
+original_data/
 models/
 logs/
 sample_imgs/
 analysis/
+*.hocr
+*.txt

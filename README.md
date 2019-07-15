@@ -25,19 +25,19 @@ Run in Terminal (setup your own virtualenv):
 `pip install -r requirements.txt` 
 
 ### Train model
-Under `src` directory:
+Under `src` directory:   
 `python3 train.py --model MODEL_NAME`   
 
 The images used for training should be placed under `../imgs/train`, and those used for validation should be placed under `../imgs/validation`. You can configure the no. of epochs, learning rate, dropout rate, and batch size by specifying the necessary command line args. While training, you can view progress on Tensorboard. Saved model will be automatically saved as ../models/MODEL_NAME.h5.
 
 ### Test on a directory of character images
-Under `src` directory:
+Under `src` directory:   
 `python3 test.py --model MODEL_NAME --test PATH_TO_DIR`   
 
 `PATH_TO_DIR` should be a valid path to a directory of character-level images and `MODEL_NAME` should be the name of a trained model under the `../models` directory.
 
 ### Run inference on any given document, word, or character image
-Under `src` directory:   
+Under `src` directory:      
 If inferring on a document image:   
 `python3 main.py --model MODEL_NAME --type doc --infer document.png`   
 If inferring on a word image:   
@@ -48,7 +48,7 @@ If inferring on a char image:
 HOCR output will be written to working directory as `output.hocr` by default.
 
 ### Demo (Flask UI)
-Under `src` directory:   
+Under `src` directory:    
 `python3 app.py --model MODEL_NAME`    
 `MODEL_NAME` should be the name of a trained model under the `../models` directory.
 

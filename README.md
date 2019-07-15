@@ -1,7 +1,6 @@
 # Character-Level Model for Handwriting Recognition
 
 ## Background
----
 This is a model that recognizes handwritten characters in a given document. The full pipeline is as follows:
 1. Accept document as input and applies some pre-processing & denoising (not done yet) 
 2. Detects text in document & crops them out as sub-images
@@ -16,7 +15,6 @@ Handwriting Recognition Model is a deep Convolutional Neural Network written in 
 
 
 ## Getting Started
----
 
 ### Environment
 - Ubuntu 16.04
@@ -62,7 +60,6 @@ Aiden Chia
 You may reach me via Slack.
 
 ## Todo
----
 - Accept document as input and applies some pre-processing & denoising
 - Classifies all cropped out sub-images as either handwritten or digital
 - Output is concatenated together and post-processed by a language model

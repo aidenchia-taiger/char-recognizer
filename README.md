@@ -39,11 +39,11 @@ Under `src` directory:
 ### Run inference on any given document, word, or character image
 Under `src` directory:      
 If inferring on a document image:   
-- `python3 main.py --model MODEL_NAME --type doc --infer document.png`   
+  `python3 main.py --model MODEL_NAME --type doc --infer document.png`   
 If inferring on a word image:   
-- `python3 main.py --model MODEL_NAME --type word --infer word.png`   
+  `python3 main.py --model MODEL_NAME --type word --infer word.png`   
 If inferring on a char image:   
-- `python3 main.py --model MODEL_NAME --type char --infer char.png`   
+  `python3 main.py --model MODEL_NAME --type char --infer char.png`   
 
 HOCR output will be written to working directory as `output.hocr` by default.
 

@@ -52,6 +52,7 @@ Under `src` directory:
 
 ## Author
 Aiden Chia
+You may reach me via Slack.
 
 ## Things to Note
 ---

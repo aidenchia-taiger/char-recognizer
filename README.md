@@ -51,7 +51,7 @@ Under `src` directory:
 ### Things to Note
 - The `--model` command line argument should be the name of a model without its extension, and not a path. Suppose `alpha.h5` is a model under the `models` directory, then the correct command line argument should be `--model alpha`, NOT `--model ../models/alpha.h5` or `--model alpha.h5`
 - Each file has multiple command line arguments some of which are optional. Use `-h` to inspect all.
-- The `test.py` file is used to test the performance of the CNN itself, and hence it will not work on a directory of word or document images
+- The `test.py` file is used to test the performance of the handwritten recognition alone, and hence it will not work on a directory of word or document images
 
 ## Authors
 Aiden Chia  

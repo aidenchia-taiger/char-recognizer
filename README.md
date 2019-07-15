@@ -49,13 +49,13 @@ Under `src` directory:
 `MODEL_NAME` should be the name of a trained model under the `../models` directory.
 
 ### Things to Note
-1. The `--model` command line argument should be the name of a model, not a path. Suppose `alpha.h5` is a model under the `models` directory, then the correct command line argument should be `--model alpha`, NOT `--model ../alpha.h5` or `--model alpha.h5`
-2. You can check all command line arguments for each file by specifying `-h`
-3. The `test.py` file is used to test the performance of the CNN itself, and hence it will not work on a directory of word or document images
+- The `--model` command line argument should be the name of a model, not a path. Suppose `alpha.h5` is a model under the `models` directory, then the correct command line argument should be `--model alpha`, NOT `--model ../alpha.h5` or `--model alpha.h5`
+- Each file has multiple command line arguments some of which are optional. Use `-h` to inspect all.
+- The `test.py` file is used to test the performance of the CNN itself, and hence it will not work on a directory of word or document images
 
 ## Author
 Aiden Chia
-You may reach me via Slack.
+You may reach me via Slack or email: aiden_chia@mymail.sutd.edu.sg
 
 ## Todo
 - Accept document as input and applies some pre-processing & denoising

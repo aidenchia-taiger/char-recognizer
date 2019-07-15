@@ -42,6 +42,7 @@ If inferring on a word image:
 `python3 main.py --model MODEL_NAME --type word --infer word.png`
 If inferring on a char image:
 `python3 main.py --model MODEL_NAME --type word --infer char.png`
+HOCR output will be written to working directory as `output.hocr` by default.
 
 ## Demo (Flask UI)
 Under `src` directory:

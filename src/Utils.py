@@ -5,8 +5,8 @@ import os
 import matplotlib.pyplot as plt
 import pdb
 
-def display(img, multiple=False,rows=3,cols=3):
-    plt.rcParams["figure.figsize"] = [9, 6]
+def display(img, multiple=False,rows=3,cols=3, width=9, height=6):
+    plt.rcParams["figure.figsize"] = [width, height]
     if multiple: # img is a list of imgs
         fig=plt.figure(figsize=(8, 8))
         for i in range(1, cols * rows + 1):

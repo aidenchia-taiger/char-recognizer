@@ -44,7 +44,7 @@ def main():
 	elif args.type == "doc":
 		# Infer a doc image - detect texts, classify if handwritten or digital, segment handwritten words, predict char by char
 		docImg = cv2.imread(args.infer) # EAST text detector requires 3 channels
-		result = mf.predictDoc(model, segmenter, textDetector, docImg, showCrop=False, showChar=False)
+		result = mf.predictDoc(model, segmenter, textDetector, docImg, showCrop=False, showChar=True)
 		outputHOCR(result, 'out.hocr')
 
 

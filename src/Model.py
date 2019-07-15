@@ -10,6 +10,7 @@ import numpy as np
 import cv2
 import pandas as pd
 import datetime
+import pickle
 import editdistance
 import os
 from Utils import display, save, percentageBlack
@@ -96,6 +97,9 @@ class ModelFactory:
 		return model
 
 	def getMapping(self):
+		if os.path.exists('../models/mapping.pkl'):
+			return pickle.load(open('../models/mapping.pkl', 'rb'))
+
 		valid_datagen = ImageDataGenerator(rescale=1./255)
 		valid_generator = valid_datagen.flow_from_directory('../imgs/validation', target_size = (self.imgSize[0], self.imgSize[1]), 
 													  batch_size=self.batchSize, color_mode='grayscale', 

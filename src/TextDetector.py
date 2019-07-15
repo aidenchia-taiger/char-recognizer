@@ -33,7 +33,8 @@ class TextDetector:
 
 	def getBBoxes(self, img):
 		layerNames = [ "feature_fusion/Conv_7/Sigmoid", "feature_fusion/concat_3"]
-		blob = cv2.dnn.blobFromImage(img, 1.0, (self.W, self.H), (123.68, 116.78, 103.94), swapRB=True, crop=False)
+		# performs mean subtraction, scaling, normalization, and channel swapping
+		blob = cv2.dnn.blobFromImage(img, scalefactor=1.0, size=(self.W, self.H), mean=(123.68, 116.78, 103.94), swapRB=True, crop=False)
 		self.net.setInput(blob)
 		(scores, geometry) = self.net.forward(layerNames)
 		(numRows, numCols) = scores.shape[2:4]
@@ -94,11 +95,10 @@ class TextDetector:
 
 		# show the output image
 		if show:
-			cv2.imshow("Text Detection", self.orig)
-			cv2.waitKey(0)
+			display(self.orig, width=18, height=12)
 		return cropped
 
 if __name__ == "__main__":
 	td = TextDetector()
-	img = cv2.imread('../sample_imgs/AIDEN.png')
+	img = cv2.imread('../sample_imgs/otp.png')
 	td.detect(img)

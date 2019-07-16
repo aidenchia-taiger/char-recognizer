@@ -22,7 +22,13 @@ Handwriting Recognition Model is a deep Convolutional Neural Network written in 
 
 ### Prerequisites
 Run in Terminal (setup your own virtualenv):   
-`pip install -r requirements.txt` 
+`pip install -r requirements.txt`
+
+### Downloads
+Download the following from [Google Drive](https://drive.google.com/drive/folders/1TxYakcaLqdLJRBXTzo-oXzqCn4OIT_7f?usp=sharing). If the link is broken, please check with the R&D team / Manager from the Taiger SG office on where you can get the following files.
+- Pre-trained handwritten recognition model named `beta.h5`   
+- Pre-trained EAST text detection model named `frozen_east_text_detection.pb`   
+- Mapping from class indices to labels pickle file named `mapping.pkl`   
 
 ### Train model
 Under `src` directory:   
@@ -54,8 +60,10 @@ Under `src` directory:
 - The `test.py` file is used to test the performance of the handwritten recognition alone, and hence it will not work on a directory of word or document images
 
 ## Authors
-Aiden Chia  
-You may reach me via Slack or email: aiden_chia@mymail.sutd.edu.sg
+- **Aiden Chia**    
+*R&D Engineer @ Taiger SG office*       
+You may reach me via Slack or email: aiden_chia@mymail.sutd.edu.sg   
+This is an individual project done during my 3-month internship with Taiger. My direct supervisor was Abishek Pradhan.   
 
 ## Todo
 - Accept document as input and applies some pre-processing & denoising

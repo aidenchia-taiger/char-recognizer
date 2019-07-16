@@ -13,6 +13,7 @@ import datetime
 import pickle
 import editdistance
 import os
+import pdb
 from Utils import display, save, percentageBlack
 from Segmenter import Segmenter
 from TextDetector import TextDetector
@@ -120,10 +121,12 @@ class ModelFactory:
 
 		return img
 
-	def predictChar(self, model, charImg):
-		prediction = self.mapping[np.argmax(model.predict(charImg, batch_size=1, verbose=1))]
-		print('[INFO] Predicted: {}'.format(prediction))
-		return prediction
+	def predictChar(self, model, charImg, threshold=0.5):
+		predictions = model.predict(charImg, batch_size=1, verbose=1)
+		prob = max(max(predictions))
+		predLabel = self.mapping[np.argmax(predictions)] if prob > threshold else ""
+		print('[INFO] Predicted: {} | Probability: {}'.format(predLabel, prob))
+		return predLabel
 
 	def predictWord(self, model, segmenter, wordImg, show=True):
 		if show:
@@ -137,7 +140,7 @@ class ModelFactory:
 
 		return pred
 
-	def predictDoc(self, model, segmenter, textDetector, docImg, showCrop=True, showChar=True):
+	def predictDoc(self, model, segmenter, textDetector, docImg, showCrop=False, showChar=False):
 		result = {"text": [], "top": [], "left": [], "width": [], "height": []}
 		croptexts = textDetector.detect(docImg, show=showCrop)
 		for crop in croptexts:

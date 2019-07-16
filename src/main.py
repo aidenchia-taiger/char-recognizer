@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 import cv2
 import pdb
-from TextDetector import TextDetector
+from Tesseract_TextDetector import TextDetector
 from Utils import display, save, percentageBlack, outputHOCR
 from Model import ModelFactory
 from Segmenter import Segmenter
@@ -19,8 +19,7 @@ def main():
 	parser.add_argument('--model', help='select which model to use', default="beta")
 	parser.add_argument('--type', help="set your input type to either doc, word, or char", default="word")
 	parser.add_argument('--infer', help="path to input file", default="../sample_imgs/AIDEN.png")
-	parser.add_argument('--showCrop', help="show bbox of texts detected by the detector", action='store_true')
-	parser.add_argument('--showChar', help="show characters segmented by the segmenter", action='store_true')
+	parser.add_argument('--show', help="display texts detected & characters segmented by detector & segmenter", action="store_true")
 	parser.add_argument('--gt', help="supply ground truth of word or char image")
 	args = parser.parse_args()
 
@@ -46,7 +45,7 @@ def main():
 	elif args.type == "doc":
 		# Infer a doc image - detect texts, classify if handwritten or digital, segment handwritten words, predict char by char
 		docImg = cv2.imread(args.infer) # EAST text detector requires 3 channels
-		result = mf.predictDoc(model, segmenter, textDetector, docImg, showCrop=args.showCrop, showChar=args.showChar)
+		result = mf.predictDoc(model, segmenter, textDetector, docImg, showCrop=args.show, showChar=args.show)
 		outputHOCR(result, 'out.hocr')
 
 

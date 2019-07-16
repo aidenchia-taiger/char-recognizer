@@ -4,6 +4,7 @@ import argparse
 import time
 import cv2
 import pdb
+from PIL import Image
 from Utils import display, save
 
 class TextDetector:
@@ -13,7 +14,7 @@ class TextDetector:
 		self.minConfidence = minConfidence
 		self.net = cv2.dnn.readNet(modelpath)
 
-	def detect(self, img, show=True):
+	def detectTexts(self, img, show=True):
 		self.orig = img.copy()
 		self.gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 		resized = self.resize(img)

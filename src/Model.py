@@ -16,7 +16,8 @@ import os
 import pdb
 from Utils import display, save, percentageBlack
 from Segmenter import Segmenter
-from TextDetector import TextDetector
+import warnings
+from Tesseract_TextDetector import TextDetector
 
 class ModelFactory:
 	def __init__(self, modelName="model", batchSize=32, numClasses=53, imgSize=(28,28,1), dropoutRatio=0.0,
@@ -109,9 +110,12 @@ class ModelFactory:
 		inv_mapping = {v:k for k,v in mapping.items()}
 		return inv_mapping
 
-	def preprocess(self, img, show=True):
-		# invert colours if black text on white bg
-		img = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY_INV)[-1] if percentageBlack(img) < 50 else img
+	def preprocess(self, img, show=True, minBlack=30):
+		# invert colours to make black text on white bg
+		img = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY_INV)[-1]
+		if percentageBlack(img) < minBlack:
+			warnings.warn("PLEASE ENSURE DISPLAYED IMAGE IS BLACK TEXT ON WHITE BG.")
+			display(img)
 		img = cv2.resize(img, (self.imgSize[0], self.imgSize[1]))
 		if show:
 			display(img)
@@ -142,19 +146,21 @@ class ModelFactory:
 
 	def predictDoc(self, model, segmenter, textDetector, docImg, showCrop=False, showChar=False):
 		result = {"text": [], "top": [], "left": [], "width": [], "height": []}
-		croptexts = textDetector.detect(docImg, show=showCrop)
-		for crop in croptexts:
-			wordImg, coord = crop
-			left, top, right, bot = coord 
+		lineBoxes, textBoxes = textDetector.detect(docImg, show=showCrop)
+		for textBox in textBoxes:
+			wordImg, coord = textBox
 			pred = self.predictWord(model, segmenter, wordImg, show=showChar)
 			print('Pred: {} | Coord: {}'.format(pred, coord))
-			result["text"].append(pred)
-			result["top"].append(top)
-			result["left"].append(left)
-			result["width"].append(right - left)
-			result["height"].append(bot - top)
+			# only include those predictions which are non-empty strings. Empty string means model's prediction probabiliy is below prob threshold
+			if pred != "":
+				result["text"].append(pred)
+				result["top"].append(coord['y'])
+				result["left"].append(coord['x'])
+				result["width"].append(coord['w'])
+				result["height"].append(coord['h'])
 
 		result = pd.DataFrame.from_dict(result)
+
 		return result
 
 	def getCER(self, pred, gt):

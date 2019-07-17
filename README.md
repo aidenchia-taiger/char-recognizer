@@ -63,7 +63,7 @@ Under `src` directory:
 - **Aiden Chia**    
 *R&D Engineer @ Taiger SG office*       
 You may reach me via Slack or email: aiden_chia@mymail.sutd.edu.sg   
-This is an individual project done during my 3-month internship with Taiger. My direct supervisor was Abishek Pradhan.   
+This is an individual project done during my 3-month internship with Taiger. My direct supervisor was Abhishek Pradhan.   
 
 ## Todo
 - Accept document as input and applies some pre-processing & denoising

@@ -40,5 +40,5 @@ class TextDetector:
 
 if __name__ == "__main__":
 	td = TextDetector()
-	img = cv2.imread('../sample_imgs/cleandoc.png')
+	img = cv2.imread('../sample_imgs/otp.png')
 	td.detect(img)

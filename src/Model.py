@@ -14,30 +14,38 @@ import pickle
 import editdistance
 import os
 import pdb
+import json
 from Utils import display, save, percentageBlack
 from Segmenter import Segmenter
 import warnings
 from Tesseract_TextDetector import TextDetector
 
 class ModelFactory:
-	def __init__(self, modelName="model", batchSize=32, numClasses=53, imgSize=(28,28,1), dropoutRatio=0.0,
-				 numFilters=[8,16,32,64,128,256], kernelVals=[3,3,3,5,5,5], poolVals=[2,2,2,1,1,1], strideVals=[1,1,1,1,1,1],
-				 learningRate=0.01, numEpochs=50):
-		self.dropoutRatio = dropoutRatio
-		self.learningRate = learningRate
-		self.numEpochs = numEpochs
-		self.imgSize = imgSize
-		self.batchSize = batchSize
-		self.numClasses = numClasses
-		self.numFilters = numFilters
-		self.kernelVals = kernelVals
-		self.poolVals = poolVals
-		self.strideVals = strideVals
-		self.modelName = modelName
-		self.mapping = self.getMapping()
-		self.logpath = os.path.join('../logs', datetime.datetime.now().strftime("Time_%H%M_Date_%d-%m")) + "_" + self.modelName.split('/')[-1]
-		self.savepath = os.path.join('../models', modelName) + '.h5'
+	def __init__(self, configFile):
+		configs = json.load(open(configFile))
+
+		self.modelName = configs['Model Name']
+		self.numClasses = configs['Num Classes']
+		self.mapping = self.getMapping(configs['Mapping File'])
+		self.trainDir = configs['Train Dir']
+		self.validDir = configs['Valid Dir']
+		self.testDir = configs['Test Dir']
+		self.dropoutRatio = configs['Dropout Ratio']
+		self.learningRate = configs['Learning Rate']
+		self.numEpochs = configs['Num Epochs']
+		self.imgSize = tuple(configs['Image Size'])
+		self.batchSize = configs['Batch Size']
+		self.numFilters = configs['Num Filters']
+		self.kernelVals = configs['Kernel Values']
+		self.poolVals = configs['Pool Values']
+		self.strideVals = configs['Stride Values']
+		self.minConfidence = configs['Min Confidence']
+		self.logpath = os.path.join('../logs', datetime.datetime.now().strftime("Time_%H%M_Date_%d-%m")) + "Model_" + self.modelName 
+		self.savepath = os.path.join('../models', self.modelName) + '.h5'
+
 		[print('[INFO] {}: {}'.format(k,v)) for k, v in dict(vars(self)).items()]
+		assert len(self.kernelVals) == len(self.poolVals) == len(self.numFilters)
+		assert len(self.imgSize) == 3
 
 	def build(self):
 		numCNNlayers = len(self.kernelVals)
@@ -70,12 +78,12 @@ class ModelFactory:
 		model.compile(optimizer=Adam(self.learningRate), loss='categorical_crossentropy', metrics=['accuracy'])
 		train_datagen = ImageDataGenerator(rescale=1./255, rotation_range=10, width_shift_range=0.2, height_shift_range=0.2, 
 										   shear_range=0.2)
-		train_generator = train_datagen.flow_from_directory('../imgs/train', target_size = (self.imgSize[0], self.imgSize[1]), 
+		train_generator = train_datagen.flow_from_directory(self.trainDir, target_size = (self.imgSize[0], self.imgSize[1]), 
 													  batch_size=self.batchSize, color_mode='grayscale', 
 													  class_mode='categorical', shuffle=True)
 
 		valid_datagen = ImageDataGenerator(rescale=1./255)
-		valid_generator = valid_datagen.flow_from_directory('../imgs/validation', target_size = (self.imgSize[0], self.imgSize[1]), 
+		valid_generator = valid_datagen.flow_from_directory(self.validDir, target_size = (self.imgSize[0], self.imgSize[1]), 
 													  batch_size=self.batchSize, color_mode='grayscale', 
 													  class_mode='categorical', shuffle=False) 
 
@@ -98,24 +106,27 @@ class ModelFactory:
 
 		return model
 
-	def getMapping(self):
-		if os.path.exists('../models/mapping.pkl'):
-			return pickle.load(open('../models/mapping.pkl', 'rb'))
+	def getMapping(self, mappingFile):
+		if os.path.exists(mappingFile):
+			return pickle.load(open(mappingFile, 'rb'))
 
+		# If mapping file doesn't exist, obtain mapping from validation dataset
 		valid_datagen = ImageDataGenerator(rescale=1./255)
-		valid_generator = valid_datagen.flow_from_directory('../imgs/validation', target_size = (self.imgSize[0], self.imgSize[1]), 
+		valid_generator = valid_datagen.flow_from_directory(self.validDir, target_size = (self.imgSize[0], self.imgSize[1]), 
 													  batch_size=self.batchSize, color_mode='grayscale', 
 													  class_mode='categorical', shuffle=False)
 		mapping = valid_generator.class_indices
 		inv_mapping = {v:k for k,v in mapping.items()}
 		return inv_mapping
 
-	def preprocess(self, img, show=True, minBlack=30):
-		# invert colours to make black text on white bg
-		img = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY_INV)[-1]
+	def preprocess(self, img, show=True, minBlack=30, invert=True):
+		# invert colours to make image a white text on black bg
+		if invert:
+			img = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY_INV)[-1]
+
 		if percentageBlack(img) < minBlack:
 			warnings.warn("PLEASE ENSURE DISPLAYED IMAGE IS BLACK TEXT ON WHITE BG.")
-			display(img)
+			#display(img)
 		img = cv2.resize(img, (self.imgSize[0], self.imgSize[1]))
 		if show:
 			display(img)
@@ -125,10 +136,11 @@ class ModelFactory:
 
 		return img
 
-	def predictChar(self, model, charImg, threshold=0.5):
+	def predictChar(self, model, charImg):
 		predictions = model.predict(charImg, batch_size=1, verbose=1)
 		prob = max(max(predictions))
-		predLabel = self.mapping[np.argmax(predictions)] if prob > threshold else ""
+		# Replace prediction with empty str if below a certain confidence threshold
+		predLabel = self.mapping[np.argmax(predictions)] if prob > self.minConfidence else ""
 		print('[INFO] Predicted: {} | Probability: {}'.format(predLabel, prob))
 		return predLabel
 
@@ -145,7 +157,7 @@ class ModelFactory:
 		return pred
 
 	def predictDoc(self, model, segmenter, textDetector, docImg, showCrop=False, showChar=False):
-		result = {"text": [], "top": [], "left": [], "width": [], "height": []}
+		textPreds = {"text": [], "top": [], "left": [], "width": [], "height": []}
 		lineBoxes, textBoxes = textDetector.detect(docImg, show=showCrop)
 		for textBox in textBoxes:
 			wordImg, coord = textBox
@@ -153,15 +165,15 @@ class ModelFactory:
 			print('Pred: {} | Coord: {}'.format(pred, coord))
 			# only include those predictions which are non-empty strings. Empty string means model's prediction probabiliy is below prob threshold
 			if pred != "":
-				result["text"].append(pred)
-				result["top"].append(coord['y'])
-				result["left"].append(coord['x'])
-				result["width"].append(coord['w'])
-				result["height"].append(coord['h'])
+				textPreds["text"].append(pred)
+				textPreds["top"].append(coord['y'])
+				textPreds["left"].append(coord['x'])
+				textPreds["width"].append(coord['w'])
+				textPreds["height"].append(coord['h'])
 
-		result = pd.DataFrame.from_dict(result)
+		textPreds = pd.DataFrame.from_dict(textPreds)
 
-		return result
+		return textPreds, lineBoxes
 
 	def getCER(self, pred, gt):
 		cer = editdistance.eval(pred, gt) * 100/ len(gt)
@@ -171,5 +183,5 @@ class ModelFactory:
 		return cer
 
 if __name__ == '__main__':
-	mf = ModelFactory()
+	mf = ModelFactory('betaconfig.json')
 	model = mf.build()

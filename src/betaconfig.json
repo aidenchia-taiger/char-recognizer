@@ -1,0 +1,18 @@
+{
+	"Model Name": "beta",
+	"Num Classes": 53,
+	"Mapping File": "../models/betamapping.pkl",
+	"Train Dir": "../imgs/train",
+	"Valid Dir": "../imgs/validation",
+	"Test Dir": "../imgs/test",
+	"Dropout Ratio": 0.0,
+	"Learning Rate": 0.01,
+	"Num Epochs": 50,
+	"Image Size": [28, 28, 1],
+	"Batch Size": 32,
+	"Num Filters": [8, 16, 32, 64, 128, 256],
+	"Kernel Values": [3, 3, 3, 5, 5, 5],
+	"Pool Values": [2, 2, 2, 1, 1, 1],
+	"Stride Values": [1, 1, 1, 1, 1, 1],
+	"Min Confidence": 0.5
+}

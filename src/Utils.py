@@ -11,10 +11,10 @@ def display(img, multiple=False,rows=3,cols=3, width=9, height=6):
         fig=plt.figure(figsize=(8, 8))
         for i in range(1, cols * rows + 1):
             fig.add_subplot(rows, cols, i)
-            image = img[i]
+            image = img[i - 1]
             if image.ndim == 3:
                 image = np.squeeze(image)
-            plt.imshow(image)
+            plt.imshow(image, 'gray')
         plt.show()
 
     else:
@@ -25,6 +25,7 @@ def display(img, multiple=False,rows=3,cols=3, width=9, height=6):
         elif img.ndim == 3:
             img = np.squeeze(img)
         plt.imshow(img,'gray')
+        plt.xticks([])
         plt.show()
 
 def save(img, name, prefix=None, suffix=None):
@@ -55,7 +56,7 @@ def percentageBlack(img):
     numWhite = np.count_nonzero(img)
     return 100 - numWhite * 100 / img.size
 
-def outputHOCR(textPred, filename):
+def outputHOCR(textPred, lineBoxes, filename):
     numBins = getBins(textPred['top'])
     #print(numBins)
     bins = pd.cut(textPred['top'], numBins)
@@ -76,6 +77,7 @@ def getBins(series):
     series = series.sort_values(ascending=True)
     jump = series.min()
     for i in series:
+        if i - jump > 20:
             numBuckets += 1
             jump = i
 

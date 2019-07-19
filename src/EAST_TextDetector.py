@@ -14,7 +14,7 @@ class TextDetector:
 		self.minConfidence = minConfidence
 		self.net = cv2.dnn.readNet(modelpath)
 
-	def detectTexts(self, img, show=True):
+	def detect(self, img, show=True):
 		self.orig = img.copy()
 		self.gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 		resized = self.resize(img)
@@ -101,5 +101,5 @@ class TextDetector:
 
 if __name__ == "__main__":
 	td = TextDetector()
-	img = cv2.imread('../sample_imgs/otp.png')
+	img = cv2.imread('../sample_imgs/cleandoc.png')
 	td.detect(img)

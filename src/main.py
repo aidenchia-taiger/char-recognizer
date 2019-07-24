@@ -47,7 +47,7 @@ def main():
 	elif args.type == "doc":
 		# Infer a doc image - detect texts, classify if handwritten or digital, segment handwritten words, predict char by char
 		docImg = cv2.imread(args.infer)
-		docImg = deslanter.deslant(docImg)
+		docImg = deslanter.deslant(docImg, args.show)
 		textPreds, lineBoxes = mf.predictDoc(model, segmenter, textDetector, docImg, showCrop=args.show, showChar=args.show)
 		outputHOCR(textPreds, lineBoxes, 'out.hocr')
 

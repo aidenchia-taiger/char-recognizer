@@ -45,9 +45,9 @@ class Deslanter:
 
 		return rotated
 
-	def deslant(self, img):
+	def deslant(self, img, show=False):
 		angle = self.detectSlant(img)
-		rotated_img = self.deslantImg(img, angle)
+		rotated_img = self.deslantImg(img, angle, show)
 
 		return rotated_img
 

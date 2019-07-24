@@ -7,7 +7,7 @@ This is a model that recognizes handwritten characters in a given document, such
 1. Accept document as input and applies some pre-processing
 2. Detects all texts in document & crops them out as sub-images
 3. Classifies all cropped out sub-images as either handwritten text, digital text, or just noise (not done yet)
-4. From a handwritten word image, segments into individual characters and crops them out individually as sub-sub-images
+4. From a handwritten word image, segments into individual characters and crops them out individually as sub-images
 5. Each handwritten character image is sent to handwritten recognition model for inference
 6. Output is concatenated together to form a word and post-processed by a language model / spell corrector
 7. All predictions are written to a standard HOCR file format

@@ -18,7 +18,7 @@ def testModel():
 	model = mf.load()
 
 	imgFiles = []
-	gt = []
+	
 	for root, _, files in os.walk(args.test):
 		for file in files:
 			if file[-4:] != '.png':

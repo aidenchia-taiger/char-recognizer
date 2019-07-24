@@ -8,6 +8,7 @@ import tensorflow as tf
 import cv2
 import pdb
 from Tesseract_TextDetector import TextDetector
+from Deslanter import Deslanter
 from Utils import display, save, outputHOCR
 from Model import ModelFactory
 from Segmenter import Segmenter
@@ -17,16 +18,17 @@ def main():
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--model', help='select which model to use', default="beta")
-	parser.add_argument('--type', help="set your input type to either doc, word, or char", default="word")
+	parser.add_argument('--type', help="set your input type to either doc, word, or char", default="doc")
 	parser.add_argument('--infer', help="path to input file")
 	parser.add_argument('--show', help="display texts detected & characters segmented by detector & segmenter", action="store_true")
 	parser.add_argument('--gt', help="supply ground truth of word or char image")
 	args = parser.parse_args()
 
-	mf = ModelFactory(modelName=args.model)
+	mf = ModelFactory()
 	model = mf.load()
 	segmenter = Segmenter()
 	textDetector = TextDetector()
+	deslanter = Deslanter()
 
 	if args.type == "char":
 		# Infer a char image - no need to do segmentation
@@ -44,7 +46,8 @@ def main():
 
 	elif args.type == "doc":
 		# Infer a doc image - detect texts, classify if handwritten or digital, segment handwritten words, predict char by char
-		docImg = cv2.imread(args.infer) # EAST text detector requires 3 channels
+		docImg = cv2.imread(args.infer)
+		docImg = deslanter.deslant(docImg)
 		textPreds, lineBoxes = mf.predictDoc(model, segmenter, textDetector, docImg, showCrop=args.show, showChar=args.show)
 		outputHOCR(textPreds, lineBoxes, 'out.hocr')
 

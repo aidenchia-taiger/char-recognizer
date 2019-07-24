@@ -21,7 +21,7 @@ import warnings
 from Tesseract_TextDetector import TextDetector
 
 class ModelFactory:
-	def __init__(self, configFile):
+	def __init__(self, configFile='betaconfig.json'):
 		configs = json.load(open(configFile))
 
 		self.modelName = configs['Model Name']

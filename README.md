@@ -4,12 +4,12 @@ This is a model that recognizes handwritten characters in a given document, such
 ## Background
 ![Example Document](https://github.com/aidenchia-taiger/char-recognizer/blob/master/figures/otp.png)   
  The full pipeline is as follows:
-1. Accept document as input and applies some pre-processing & denoising (not done yet) 
+1. Accept document as input and applies some pre-processing
 2. Detects all texts in document & crops them out as sub-images
 3. Classifies all cropped out sub-images as either handwritten text, digital text, or just noise (not done yet)
 4. From a handwritten word image, segments into individual characters and crops them out individually as sub-sub-images
 5. Each handwritten character image is sent to handwritten recognition model for inference
-6. Output is concatenated together to form a word and post-processed by a language model (not done yet)
+6. Output is concatenated together to form a word and post-processed by a language model / spell corrector
 7. All predictions are written to a standard HOCR file format
 
 Handwriting Recognition Model is a deep Convolutional Neural Network written in Keras. Please refer to the Confluence [page](https://taiger.atlassian.net/wiki/spaces/NLP/pages/693600765/Word+Recognition+with+Explicit+Character+Segmentation?atlOrigin=eyJpIjoiOTA1YWFmOGUxNDQ4NDk5ZThkZTJlMWUzNTdhNjZlYjYiLCJwIjoiYyJ9) for a full explanation.

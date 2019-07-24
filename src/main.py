@@ -7,11 +7,11 @@ import numpy as np
 import tensorflow as tf
 import cv2
 import pdb
-from Tesseract_TextDetector import TextDetector
-from Deslanter import Deslanter
 from Utils import display, save, outputHOCR
 from Model import ModelFactory
-from Segmenter import Segmenter
+from TextDetector.Tesseract_TextDetector import TextDetector
+from Deslanter.Deslanter import Deslanter
+from Segmenter.Segmenter import Segmenter
 
 def main():
 	'Infer on a single word / character image or entire document'

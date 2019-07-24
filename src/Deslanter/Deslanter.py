@@ -54,5 +54,5 @@ class Deslanter:
 
 if __name__ == "__main__":
 	deslanter = Deslanter()
-	img = cv2.imread('../sample_imgs/slant.jpg')
+	img = cv2.imread('../../sample_imgs/slant.jpg')
 	deslanter.deslant(img)

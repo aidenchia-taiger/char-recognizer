@@ -9,9 +9,10 @@ import cv2
 import pdb
 from Utils import display, save, outputHOCR
 from Model import ModelFactory
-from TextDetector.Tesseract_TextDetector import TextDetector
 from Deslanter.Deslanter import Deslanter
 from Segmenter.Segmenter import Segmenter
+from TextDetector.TesseractTextDetector import TextDetector
+#from TextDetector.EASTTextDetector import TextDetector
 
 def main():
 	'Infer on a single word / character image or entire document'

@@ -18,7 +18,8 @@ import json
 from Utils import display, save, percentageBlack
 from Segmenter import Segmenter
 import warnings
-from TextDetector.Tesseract_TextDetector import TextDetector
+from TextDetector.TesseractTextDetector import TextDetector
+#from TextDetector.EASTTextDetector import TextDetector
 
 class ModelFactory:
 	def __init__(self, configFile='betaconfig.json'):

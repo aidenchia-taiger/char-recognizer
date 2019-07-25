@@ -5,7 +5,7 @@ import numpy as np
 import cv2
 from Model import ModelFactory
 
-# TODO: Supply ground truth
+'TODO: Supply ground truth'
 
 def testModel():
 	'Test the model on a directory of character images'

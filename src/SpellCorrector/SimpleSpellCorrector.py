@@ -1,9 +1,10 @@
 import enchant
 import json
+from pdb import set_trace
 import re
 import argparse
 
-class SimpleSpellCorrector:
+class SpellCorrector:
 	def __init__(self, lexicon="lexicon.txt", misclassify="misclassify.json"):
 		"""
 		This SimpleSpellCorrector takes as input the predicted character outputs from the CNN concatenated together
@@ -37,32 +38,39 @@ class SimpleSpellCorrector:
 		Returns: 
 			corrected - correctly spelled word
 		"""
+		text = text.lower()
 
 		# First check if letters are all alphabetical
 		if text.isalpha():
-			text = text.lower()
 
 			# Next check if the word is a valid word, if it is, don't do any spell correcting
 			if self.checker.check(text):
+				#print('[INFO] Detected valid word')
 				return text
 
 			# Word is probably mis-spelled, so correct it
 			else:
+				#print('[INFO] Detected mis-spelled word')
 				corrected = self.checker.suggest(text)[0]
 
 		# Check if all digits, if it is, leave it alone
 		elif text.isdigit():
+			#print('[INFO] Detected Number')
 			return text
 
 		elif self.checkDate(text):
+			#print('[INFO] Detected Date')
 			return self.processDate(text)
 
 		elif self.checkNRIC(text):
+			#print('[INFO] Detected NRIC')
 			return self.processNRIC(text)
 
 		else:
+			#print('[INFO] Detected invalid word')
 			candidates = self.getCandidates(text)
 			valid_words = [x for x in candidates if self.checker.check(x)]
+
 			# for now, without a language model, we arbitraily pick the first valid word in the list as the corrected word because
 			# the list is already ordered according to confusion matrix i.e. "9" is most commonly confused for "g" then "q"
 			if len(valid_words) != 0:
@@ -70,6 +78,7 @@ class SimpleSpellCorrector:
 
 			# If no valid words can be found, then just return the original word
 			else:
+				#print("[INFO] Cannot find correct word")
 				return candidates[0]
 
 		return corrected
@@ -85,22 +94,32 @@ class SimpleSpellCorrector:
 		Returns:
 			candidates - a list of words where the commonly misclassified characters are swapped out
 		"""
+		
 		candidates = [text]
+		
+		candidate = text
 		for i, char in enumerate(text):
 			if char in self.misclassify:
 				for newchar in self.misclassify[char]:
-					candidate = text[:i] + newchar + text[i+1:]
-					candidates.append(candidate)
+					if i == 0:
+						candidate = newchar + candidate[1:]
+					else:
+						candidate = candidate[:i] + newchar + text[i+1:]
+			
+					candidates.append(candidate)  
 
+		#print(candidates)
 		return candidates
+	
+
 
 	def checkDate(self, text):
 		"""
 		Simple rule-based approach to check if text matches date format e.g. 23/05/19. Note that '-' was not trained
-		as one of the classes hence is not included for now. Future work should include '-'.
+		as one of the classes in the CNN, hence is not included for now. Future work should include '-'.
 		"""
 		pattern1 = re.compile(r'\d\d[ilIL/]\d\d')
-		pattern2 = re.compile(r'\d[ilIL/]\d')
+		pattern2 = re.compile(r'\d[ilIL/]\d[ilIL/]')
 		return re.search(pattern1, text) is not None or re.search(pattern2, text) is not None
 
 	def processDate(self, text):
@@ -142,21 +161,37 @@ class SimpleSpellCorrector:
 
 		return corrected
 
-		
+def testSpellChecker(sc, testfile='tests.json'):
+	tests = json.load(open(testfile))
+	numCorrect = 0
+	numWords = 0
+	for k, v in tests.items():
+		for mispelled in v:
+			corrected = sc.correct(mispelled)
+			print('[INFO] Initial: {}\t| Corrected: {}'.format(mispelled, corrected))
+			numCorrect += 1 if corrected == k else 0
+			numWords += 1
 
+	print('[INFO] Percentage of Corrected Spellings: {:.2f}'.format(numCorrect * 100 / numWords))
+		
 
 def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--i', help="input word string", default='9row')
+	parser.add_argument('--t', help="supply a json file of test cases, with key: correct word and, \
+								     value: list of mis-spelled words", \
+								     action="store_true")
 	args = parser.parse_args()
 
-	sc = SimpleSpellCorrector()
-	text = args.i
-	corrected = sc.correct(text)
+	sc = SpellCorrector()
+	if args.t:
+		testSpellChecker(sc)
 
-	print('\n[INFO] Initial Text: {}'.format(text))
-	print('[INFO] Corrected Text: {}'.format(corrected))
 
+	else:
+		text = args.i
+		corrected = sc.correct(text)
+		print('[INFO] Initial: {}\t| Corrected: {}'.format(text, corrected))
 
 
 if __name__ == "__main__":

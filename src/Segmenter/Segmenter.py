@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import pdb
 import argparse
 from Utils import display, save, is_binary, printInfo, makeDir, percentageBlack
-from Denoiser import Denoiser
 
 class Segmenter:
     def __init__(self):

@@ -16,7 +16,7 @@ import os
 import pdb
 import json
 from Utils import display, save, percentageBlack
-from Segmenter import Segmenter
+from Segmenter.Segmenter import Segmenter
 import warnings
 from TextDetector.TesseractTextDetector import TextDetector
 #from TextDetector.EASTTextDetector import TextDetector
@@ -164,7 +164,9 @@ class ModelFactory:
 			wordImg, coord = textBox
 			pred = self.predictWord(model, segmenter, wordImg, show=showChar)
 			print('Pred: {} | Coord: {}'.format(pred, coord))
-			# only include those predictions which are non-empty strings. Empty string means model's prediction probabiliy is below prob threshold
+			
+			# only include those predictions which are non-empty strings. 
+			# Empty string means model's prediction probabiliy for all characters is below prob threshold
 			if pred != "":
 				textPreds["text"].append(pred)
 				textPreds["top"].append(coord['y'])

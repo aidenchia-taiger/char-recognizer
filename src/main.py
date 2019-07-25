@@ -11,7 +11,7 @@ from Utils import display, save, outputHOCR
 from Model import ModelFactory
 from Deslanter.Deslanter import Deslanter
 from Segmenter.Segmenter import Segmenter
-from TextDetector.TesseractTextDetector import TextDetector2
+from TextDetector.TesseractTextDetector import TextDetector
 #from TextDetector.EASTTextDetector import TextDetector
 
 def main():

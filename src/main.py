@@ -35,7 +35,7 @@ def main():
 	if args.type == "char":
 		# Infer a char image - no need to do segmentation
 		charImg = cv2.imread(args.infer, cv2.IMREAD_GRAYSCALE)
-		charImg = mf.preprocess(charImg)
+		charImg = mf.preprocess(charImg, invert=False)
 		prediction = mf.predictChar(model, charImg)
 
 	elif args.type == "word":

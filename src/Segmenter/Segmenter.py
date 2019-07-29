@@ -39,7 +39,7 @@ class Segmenter:
                     save(roi, name= str(self.numCharacters), prefix='../out/' + write_to_dir, suffix='.png')
 
         #save(img, name='original', prefix='../out/' + img[:-4].split('/')[-1], suffix='.png')
-        print('[INFO] No. of Characters Found: {}'.format(self.numCharacters))
+        print('\n[INFO] No. of Characters Found: {}'.format(self.numCharacters))
         return rois
 
 def main():

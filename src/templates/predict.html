@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>
-			Taiger Handwriting Recognition
-		</title>
+		<link rel="stylesheet" href="static/upload.css">
+		<img src="static/taiger_logo.png" width="150" height="75">
+		<h1> Taiger Handwriting Recognition </h1>
 	</head>
-	<img src= "{{orig}}">
+	<p>
+		Original Image:
+	</p>
+	<img src= "{{url_for('static', filename=filename)}}" alt="Uploaded image" width=800 height=400>
 	<p>	
-		Prediction = {{pred}}
+		Prediction:
+	</p>
+	<p>
+		{{pred}}
 	</p>
 </html>

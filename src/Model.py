@@ -112,6 +112,7 @@ class ModelFactory:
 		if os.path.exists(mappingFile):
 			return pickle.load(open(mappingFile, 'rb'))
 
+
 		# If mapping file doesn't exist, obtain mapping from validation dataset
 		valid_datagen = ImageDataGenerator(rescale=1./255)
 		valid_generator = valid_datagen.flow_from_directory(self.validDir, target_size = (self.imgSize[0], self.imgSize[1]), 
@@ -168,7 +169,7 @@ class ModelFactory:
 		for textBox in textBoxes:
 			wordImg, coord = textBox
 			pred = self.predictWord(model, segmenter, wordImg, spellCorrector, show=showChar)
-			print('\nPred: {} \t| Coord: {}'.format(pred, coord))
+			print('Pred: {} \t| Coord: {}'.format(pred, coord))
 			
 			# only include those predictions which are non-empty strings. 
 			# Empty string means model's prediction probabiliy for all characters is below prob threshold

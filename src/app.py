@@ -9,7 +9,8 @@ import numpy as np
 import tensorflow as tf
 import cv2
 import pdb
-from Utils import display, output
+import shutil
+from Utils import display, output, makeDir
 from Model import ModelFactory
 from Segmenter.Segmenter import Segmenter
 from TextDetector.TesseractTextDetector import TextDetector
@@ -52,11 +53,17 @@ def predict():
 			img = np.array(Image.open(io.BytesIO(request.files['image'].read())).convert('L'))
 			docImg = deslanter.deslant(img)
 			textPreds, lineBoxes = mf.predictDoc(model, segmenter, textDetector, docImg, spellCorrector, \
-											 showCrop=False, showChar=False)
+											 	 showCrop=False, showChar=False)
+			
+			filename = request.files.getlist("image")[0].filename
+
+			# Copy the image over to static folder so we can display it on the UI
+			shutil.copy(os.path.join('../sample_imgs', filename), os.path.join("static", filename))
+			
 
 			pred = output(textPreds, lineBoxes, 'out.hocr', 'out.txt')
 
-			return render_template('predict.html', pred=pred)
+			return render_template('predict.html', pred=pred, filename=filename)
 
 	return "Please upload an image"
 

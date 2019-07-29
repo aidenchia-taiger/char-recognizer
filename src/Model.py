@@ -15,9 +15,10 @@ import editdistance
 import os
 import pdb
 import json
+import warnings
 from Utils import display, save, percentageBlack
 from Segmenter.Segmenter import Segmenter
-import warnings
+from SpellCorrector.SimpleSpellCorrector import SpellCorrector
 from TextDetector.TesseractTextDetector import TextDetector
 #from TextDetector.EASTTextDetector import TextDetector
 
@@ -142,10 +143,10 @@ class ModelFactory:
 		prob = max(max(predictions))
 		# Replace prediction with empty str if below a certain confidence threshold
 		predLabel = self.mapping[np.argmax(predictions)] if prob > self.minConfidence else ""
-		print('[INFO] Predicted: {} | Probability: {}'.format(predLabel, prob))
+		print('[INFO] Predicted: {} \t| Probability: {}'.format(predLabel, prob))
 		return predLabel
 
-	def predictWord(self, model, segmenter, wordImg, show=True):
+	def predictWord(self, model, segmenter, wordImg, spellCorrector=None, show=True):
 		if show:
 			display(wordImg)
 		charImgs = segmenter.segment(wordImg)
@@ -155,15 +156,19 @@ class ModelFactory:
 			prediction = self.predictChar(model, charImg)
 			pred += prediction
 
+		if spellCorrector:
+			print('[INFO] Initial Prediction: {} \t| Spellchecked: {}'.format(pred, spellCorrector.correct(pred)))
+			pred = spellCorrector.correct(pred)
+
 		return pred
 
-	def predictDoc(self, model, segmenter, textDetector, docImg, showCrop=False, showChar=False):
+	def predictDoc(self, model, segmenter, textDetector, docImg, spellCorrector=None, showCrop=False, showChar=False):
 		textPreds = {"text": [], "top": [], "left": [], "width": [], "height": []}
 		lineBoxes, textBoxes = textDetector.detect(docImg, show=showCrop)
 		for textBox in textBoxes:
 			wordImg, coord = textBox
-			pred = self.predictWord(model, segmenter, wordImg, show=showChar)
-			print('Pred: {} | Coord: {}'.format(pred, coord))
+			pred = self.predictWord(model, segmenter, wordImg, spellCorrector, show=showChar)
+			print('\nPred: {} \t| Coord: {}'.format(pred, coord))
 			
 			# only include those predictions which are non-empty strings. 
 			# Empty string means model's prediction probabiliy for all characters is below prob threshold
@@ -180,7 +185,7 @@ class ModelFactory:
 
 	def getCER(self, pred, gt):
 		cer = editdistance.eval(pred, gt) * 100/ len(gt)
-		print("[INFO] Ground Truth: {} | Predicted: {}".format(pred, gt))
+		print("[INFO] Ground Truth: {} \t| Predicted: {}".format(gt, pred))
 		print("[INFO] Character Error Rate: {:.1f}%".format(cer))
 
 		return cer

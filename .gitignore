@@ -1,6 +1,6 @@
 imgs/*
 !imgs/.gitkeep
-out/
+handwritten_words_imgs/
 original_data/
 models/*
 !models/.gitkeep
@@ -11,3 +11,4 @@ sample_imgs/*
 analysis/
 *.hocr
 userconfig.txt
+tessout.txt

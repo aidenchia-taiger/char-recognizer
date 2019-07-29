@@ -25,7 +25,7 @@ class SpellCorrector:
 		"""
 
 		self.checker = enchant.DictWithPWL("en_US", lexicon)
-		self.misclassify = json.load(open('misclassify.json'))
+		self.misclassify = json.load(open(misclassify))
 
 	def correct(self, text):
 		"""
@@ -38,11 +38,11 @@ class SpellCorrector:
 		Returns: 
 			corrected - correctly spelled word
 		"""
-		text = text.lower()
+		if text == "":
+			return ""
 
 		# First check if letters are all alphabetical
 		if text.isalpha():
-
 			# Next check if the word is a valid word, if it is, don't do any spell correcting
 			if self.checker.check(text):
 				#print('[INFO] Detected valid word')
@@ -68,7 +68,8 @@ class SpellCorrector:
 
 		else:
 			#print('[INFO] Detected invalid word')
-			candidates = self.getCandidates(text)
+			candidates = self.getCandidates(text.lower())
+			#print(candidates)
 			valid_words = [x for x in candidates if self.checker.check(x)]
 
 			# for now, without a language model, we arbitraily pick the first valid word in the list as the corrected word because
@@ -172,7 +173,7 @@ def testSpellChecker(sc, testfile='tests.json'):
 			numCorrect += 1 if corrected == k else 0
 			numWords += 1
 
-	print('[INFO] Percentage of Corrected Spellings: {:.2f}'.format(numCorrect * 100 / numWords))
+	print('[INFO] Percentage of Corrected Spellings: {:.2f}%'.format(numCorrect * 100 / numWords))
 		
 
 def main():

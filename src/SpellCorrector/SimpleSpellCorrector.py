@@ -41,6 +41,8 @@ class SpellCorrector:
 		if text == "":
 			return ""
 
+		text = text.upper()
+
 		# First check if letters are all alphabetical
 		if text.isalpha():
 			# Next check if the word is a valid word, if it is, don't do any spell correcting
@@ -68,19 +70,18 @@ class SpellCorrector:
 
 		else:
 			#print('[INFO] Detected invalid word')
-			candidates = self.getCandidates(text.lower())
+			candidates = self.getCandidates(text.upper())
 			#print(candidates)
-			valid_words = [x for x in candidates if self.checker.check(x)]
 
-			# for now, without a language model, we arbitraily pick the first valid word in the list as the corrected word because
-			# the list is already ordered according to confusion matrix i.e. "9" is most commonly confused for "g" then "q"
-			if len(valid_words) != 0:
-				corrected = valid_words[0]
+			# After replacing the individual characters with their commonly misclassified words, then words such as
+			# "C00LB" becomes "COOLB", which we can then be corrected to a valid word, like "COOL".
+			valid_words = [self.checker.suggest(x)[0] for x in candidates]
+			#print(valid_words)
 
-			# If no valid words can be found, then just return the original word
-			else:
-				#print("[INFO] Cannot find correct word")
-				return candidates[0]
+			# If no letters have been replaced, then candidates will be length 1, containing the original word, so just
+			# return it. If some letters have been replaced, then valid words will contain at least 2 words (i.e. the
+			# original word corrected, and the word with replaced letters corrected such as COOLB ->  COOL), so return that
+			corrected = valid_words[1] if len(valid_words) >= 2 else candidates[0]
 
 		return corrected
 
@@ -98,18 +99,16 @@ class SpellCorrector:
 		
 		candidates = [text]
 		
-		candidate = text
-		for i, char in enumerate(text):
-			if char in self.misclassify:
-				for newchar in self.misclassify[char]:
-					if i == 0:
-						candidate = newchar + candidate[1:]
-					else:
-						candidate = candidate[:i] + newchar + text[i+1:]
-			
-					candidates.append(candidate)  
+		newtext = list(text)
 
-		#print(candidates)
+		for i, letter in enumerate(text):
+			if letter in self.misclassify:
+				newtext[i] = self.misclassify[letter][0]
+		
+		if newtext != text:
+			candidates.append(''.join(newtext))
+		
+		print(candidates)
 		return candidates
 	
 
@@ -169,8 +168,8 @@ def testSpellChecker(sc, testfile='tests.json'):
 	for k, v in tests.items():
 		for mispelled in v:
 			corrected = sc.correct(mispelled)
-			print('[INFO] Initial: {}\t| Corrected: {}'.format(mispelled, corrected))
-			numCorrect += 1 if corrected == k else 0
+			print('[INFO] Initial: {}\t| Corrected: {}'.format(mispelled, corrected.lower()))
+			numCorrect += 1 if corrected.lower() == k.lower() else 0
 			numWords += 1
 
 	print('[INFO] Percentage of Corrected Spellings: {:.2f}%'.format(numCorrect * 100 / numWords))

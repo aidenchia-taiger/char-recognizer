@@ -9,9 +9,12 @@ import numpy as np
 import tensorflow as tf
 import cv2
 import pdb
-from Utils import display, percentageBlack
+from Utils import display, output
 from Model import ModelFactory
-from Segmenter import Segmenter
+from Segmenter.Segmenter import Segmenter
+from TextDetector.TesseractTextDetector import TextDetector
+from SpellCorrector.SimpleSpellCorrector import SpellCorrector
+from Deslanter.Deslanter import Deslanter
 
 # Command line args
 parser = argparse.ArgumentParser()
@@ -28,10 +31,13 @@ K.set_session(sess)
 
 app = Flask(__name__)
 
-mf = ModelFactory(modelName=args.model)
+mf = ModelFactory()
 model = mf.load()
 graph = tf.get_default_graph()
 segmenter = Segmenter()
+textDetector = TextDetector()
+deslanter = Deslanter()
+spellCorrector = SpellCorrector(lexicon="SpellCorrector/lexicon.txt", misclassify="SpellCorrector/misclassify.json")
 
 @app.route('/', methods=['GET', 'POST'])
 def upload():
@@ -43,8 +49,13 @@ def predict():
 		# Use global var graph otherwise Flask loads new graph for each new request
 		global graph
 		with graph.as_default():
-			wordImg = np.array(Image.open(io.BytesIO(request.files['image'].read())).convert('L'))
-			pred = mf.predictWord(model, segmenter, wordImg, show=False)
+			img = np.array(Image.open(io.BytesIO(request.files['image'].read())).convert('L'))
+			docImg = deslanter.deslant(img)
+			textPreds, lineBoxes = mf.predictDoc(model, segmenter, textDetector, docImg, spellCorrector, \
+											 showCrop=False, showChar=False)
+
+			pred = output(textPreds, lineBoxes, 'out.hocr', 'out.txt')
+
 			return render_template('predict.html', pred=pred)
 
 	return "Please upload an image"

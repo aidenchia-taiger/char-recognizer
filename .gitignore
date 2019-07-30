@@ -2,6 +2,7 @@ imgs/*
 !imgs/.gitkeep
 handwritten_words_imgs/
 original_data/
+svm_imgs/
 models/*
 !models/.gitkeep
 logs/*

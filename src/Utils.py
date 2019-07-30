@@ -47,6 +47,8 @@ def printInfo(img):
     print('Width x Height: {} x {}'.format(img.shape[1], img.shape[0]))
     print('Aspect Ratio: {}'.format(float(img.shape[1] / img.shape[0])))
     print('Binarized: {}'.format(is_binary(img)))
+    print('Max Value: {}'.format(np.amax(img)))
+    print('Min Value: {}'.format(np.amin(img)))
 
 def makeDir(directory):
     if not os.path.exists(directory):

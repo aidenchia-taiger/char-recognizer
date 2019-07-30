@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 import argparse
 from pdb import set_trace
-from Utils import display, save
+#from Utils import display, save
 
 class Deslanter:
 	def __init__(self):
@@ -54,5 +54,5 @@ class Deslanter:
 
 if __name__ == "__main__":
 	deslanter = Deslanter()
-	img = cv2.imread('../../sample_imgs/slant.jpg')
+	img = cv2.imread('../../sample_imgs/handwritten_num.png')
 	deslanter.deslant(img)

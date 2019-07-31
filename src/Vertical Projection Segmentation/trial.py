@@ -1,3 +1,4 @@
+sys.path.append("../")
 from Model import ModelFactory
 import cv2
 import os

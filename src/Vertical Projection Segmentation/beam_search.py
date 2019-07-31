@@ -1,7 +1,8 @@
 import sys
 import cv2
 import os
-#sys.path.append("../char-recognizer/src")
+
+sys.path.append("../")
 from Model import ModelFactory
 from probableSegmentsMixed import *
 

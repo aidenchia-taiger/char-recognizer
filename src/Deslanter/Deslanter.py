@@ -4,7 +4,9 @@ import numpy as np
 import cv2
 import argparse
 from pdb import set_trace
-#from Utils import display, save
+import sys
+sys.path.append("..")
+from Utils import display, save
 
 class Deslanter:
 	def __init__(self):
@@ -48,7 +50,7 @@ class Deslanter:
 	def deslant(self, img, show=False):
 		angle = self.detectSlant(img)
 		rotated_img = self.deslantImg(img, angle, show)
-
+		print('\n')
 		return rotated_img
 
 

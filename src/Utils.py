@@ -88,9 +88,11 @@ def output(textPred, lineBoxes, hocrfile='out.hocr', textfile='out.txt'):
             f.write(row['text'] + ' ')
             pred += row['text'] + ' '
         f.write('\n')
+        
         # Hack to include fullstops at the end of every line. Most lines in documents end with a '.' Note that this isn't
         # reflected in the output hocr and txt files.
-        pred = pred[:-1] + '.' + ' '
+        #pred = pred[:-1] + '.' + ' '
+
     f.close()
 
     return pred

@@ -18,10 +18,10 @@ def testModel():
 	mf = ModelFactory(modelName=args.model)
 	segmenter = Segmenter()
 	spellCorrector = SpellCorrector(lexicon="SpellCorrector/lexicon.txt", misclassify="SpellCorrector/misclassify.json")
+	
 	model = mf.load()
 
 	imgFiles = []
-	
 
 	for root, _, files in os.walk(args.test):
 		for file in files:
@@ -41,7 +41,7 @@ def testModel():
 		elif args.type == 'word':
 			prediction = mf.predictWord(model, segmenter, img, spellCorrector)
 
-	
+
 
 
 if __name__ == "__main__":

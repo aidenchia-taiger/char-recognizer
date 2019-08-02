@@ -9,6 +9,7 @@ import tensorflow as tf
 from keras.models import load_model
 from Utils import display, save, output
 from Model import ModelFactory
+from Distinguisher import Distinguisher
 from Deslanter.Deslanter import Deslanter
 from Segmenter.Segmenter import Segmenter
 from SpellCorrector.SimpleSpellCorrector import SpellCorrector
@@ -22,7 +23,7 @@ def main():
 	parser.add_argument('--type', help=" input type is either doc, word, or char", default="doc")
 	parser.add_argument('--infer', help="path to input file")
 	parser.add_argument('--show', help="display texts detected & characters segmented by detector & segmenter", action="store_true")
-	parser.add_argument('--gt', help="supply ground truth of word or char image", default="../sample_imgs/gt.json")
+	parser.add_argument('--gt', help="supply ground truth of word or char image", default=None)
 	args = parser.parse_args()
 
 	mf = ModelFactory()
@@ -30,6 +31,8 @@ def main():
 	segmenter = Segmenter()
 	textDetector = TextDetector()
 	deslanter = Deslanter()
+	dist = Distinguisher()
+	#dist = None
 	spellCorrector = SpellCorrector(lexicon="SpellCorrector/lexicon.txt", misclassify="SpellCorrector/misclassify.json")
 
 	if args.type == "char":
@@ -50,19 +53,23 @@ def main():
 		# Infer a doc image - detect texts, segment char by char, predict each char
 		docImg = cv2.imread(args.infer)
 		docImg = deslanter.deslant(docImg, args.show)
+		print('\n')
 		textPreds, lineBoxes = mf.predictDoc(model, segmenter, textDetector, docImg, spellCorrector, \
-											 showCrop=args.show, showChar=args.show)
-
+											 distinguisher=dist, showCrop=args.show, showChar=args.show)
+		
 		pred = output(textPreds, lineBoxes, 'out.hocr', 'out.txt')
 		
 		if args.gt:
 			# Check that the gt.json file actually exists
 			assert os.path.isfile(args.gt)
+
 			# If the ground truth is in another folder, grab just the filename itself instead of the whole path
 			key = args.infer.split('/')[-1] if '/' in args.infer else args.infer
 			gt = json.load(open(args.gt))[key]
-			# We upper case everything so that the char error rate doesn't count case errors
+
+			# We upper case everything so that the char error rate & wa doesn't get skewed by case errors
 			mf.getCER(pred.upper(), gt)
+			mf.getWA(pred.upper(), gt)
 
 
 if __name__ == "__main__":

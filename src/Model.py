@@ -1,11 +1,3 @@
-import keras
-from keras.preprocessing.image import ImageDataGenerator
-from keras.models import Model, load_model
-from keras.layers import Input, MaxPooling2D, Dense, Conv2D, Flatten, Dropout, Activation, BatchNormalization
-from keras.activations import softmax, relu, sigmoid
-from keras.losses import categorical_crossentropy
-from keras.callbacks import TensorBoard, ModelCheckpoint, ReduceLROnPlateau
-from keras.optimizers import Adam
 import numpy as np
 import cv2
 import pandas as pd
@@ -16,7 +8,18 @@ import os
 import pdb
 import json
 import warnings
+import keras
+from keras.preprocessing.image import ImageDataGenerator
+from keras.models import Model, load_model
+from keras.layers import Input, MaxPooling2D, Dense, Conv2D, Flatten, Dropout, Activation, BatchNormalization
+from keras.activations import softmax, relu, sigmoid
+from keras.losses import categorical_crossentropy
+from keras.callbacks import TensorBoard, ModelCheckpoint, ReduceLROnPlateau
+from keras.optimizers import Adam
+from PIL import Image
+from tesserocr import PyTessBaseAPI
 from Utils import display, save, percentageBlack
+from Distinguisher import Distinguisher
 from Segmenter.Segmenter import Segmenter
 from SpellCorrector.SimpleSpellCorrector import SpellCorrector
 from TextDetector.TesseractTextDetector import TextDetector
@@ -163,14 +166,28 @@ class ModelFactory:
 
 		return pred
 
-	def predictDoc(self, model, segmenter, textDetector, docImg, spellCorrector=None, showCrop=False, showChar=False):
+	def predictDoc(self, model, segmenter, textDetector, docImg, spellCorrector=None, distinguisher=None, showCrop=False, showChar=False):
 		textPreds = {"text": [], "top": [], "left": [], "width": [], "height": []}
 		lineBoxes, textBoxes = textDetector.detect(docImg, show=showCrop)
+
 		for textBox in textBoxes:
 			wordImg, coord = textBox
-			pred = self.predictWord(model, segmenter, wordImg, spellCorrector, show=showChar)
-			print('Pred: {} \t| Coord: {}'.format(pred, coord))
+			# distinguisher is used to distinguish between digital and handwritten text.
+			if distinguisher:
+				if distinguisher.distinguish(wordImg, modelpath='distinguisher') == 'digital':
+					with PyTessBaseAPI() as api:
+						wordImg = Image.fromarray(wordImg)
+						api.SetImage(wordImg)
+						pred = api.GetUTF8Text().strip()
+				else:
+					pred = self.predictWord(model, segmenter, wordImg, spellCorrector, show=showChar)
+
+			# If no distinguisher is passed, then all words are assumed to be handwritten and passed to handwritten model
+			else:
+				pred = self.predictWord(model, segmenter, wordImg, spellCorrector, show=showChar)
 			
+			print('Pred: {} \t| Coord: {}\n'.format(pred, coord))
+
 			# only include those predictions which are non-empty strings. 
 			# Empty string means model's prediction probabiliy for all characters is below prob threshold
 			if pred != "":
@@ -186,10 +203,19 @@ class ModelFactory:
 
 	def getCER(self, pred, gt):
 		cer = editdistance.eval(pred, gt) * 100/ len(gt)
-		print("[INFO] Ground Truth: {} \t| Predicted: {}".format(gt, pred))
+		print("[INFO] Ground Truth: \n{}\n".format(gt))
+		print("[INFO] Prediction: \n{}\n".format(pred))
 		print("[INFO] Character Error Rate: {:.1f}%".format(cer))
 
 		return cer
+
+	def getWA(self, pred, gt):
+		pred = pred.split(' ')
+		gt = gt.split(' ')
+		wa = len(list(set(pred).intersection(gt))) * 100 / len(gt)
+		print("[INFO] Word Accuracy: {}%".format(wa))
+
+		return wa
 
 if __name__ == '__main__':
 	mf = ModelFactory('betaconfig.json')

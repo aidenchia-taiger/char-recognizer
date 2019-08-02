@@ -10,6 +10,9 @@ logs/*
 sample_imgs/*
 !sample_imgs/.gitkeep
 analysis/
+dist_imgs/
+para_imgs/
+src/static/*
 *.hocr
 userconfig.txt
 tessout.txt

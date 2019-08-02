@@ -14,5 +14,5 @@
 	"Kernel Values": [3, 3, 3, 5, 5, 5],
 	"Pool Values": [2, 2, 2, 1, 1, 1],
 	"Stride Values": [1, 1, 1, 1, 1, 1],
-	"Min Confidence": 0.1
+	"Min Confidence": 0.2
 }

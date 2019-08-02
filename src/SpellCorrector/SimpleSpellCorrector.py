@@ -1,4 +1,5 @@
 import enchant
+from difflib import SequenceMatcher
 import json
 from pdb import set_trace
 import re
@@ -52,8 +53,16 @@ class SpellCorrector:
 
 			# Word is probably mis-spelled, so correct it
 			else:
-				#print('[INFO] Detected mis-spelled word')
-				corrected = self.checker.suggest(text)[0]
+				print('[INFO] Detected mis-spelled word')
+				dic = {}
+				score = 0
+				for i in set(self.checker.suggest(text)):
+					tmp = SequenceMatcher(None, text, i).ratio()
+					dic[tmp] = i
+					if tmp > score:
+						score = tmp
+
+				corrected = dic[score]
 
 		# Check if all digits, if it is, leave it alone
 		elif text.isdigit():
@@ -79,8 +88,7 @@ class SpellCorrector:
 			#print(valid_words)
 
 			# If no letters have been replaced, then candidates will be length 1, containing the original word, so just
-			# return it. If some letters have been replaced, then valid words will contain at least 2 words (i.e. the
-			# original word corrected, and the word with replaced letters corrected such as COOLB ->  COOL), so return that
+			# return it.
 			corrected = valid_words[1] if len(valid_words) >= 2 else candidates[0]
 
 		return corrected

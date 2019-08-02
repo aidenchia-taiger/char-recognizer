@@ -16,6 +16,7 @@ from Segmenter.Segmenter import Segmenter
 from TextDetector.TesseractTextDetector import TextDetector
 from SpellCorrector.SimpleSpellCorrector import SpellCorrector
 from Deslanter.Deslanter import Deslanter
+from tessTest import TesseractRunner
 
 # Command line args
 parser = argparse.ArgumentParser()
@@ -39,6 +40,7 @@ segmenter = Segmenter()
 textDetector = TextDetector()
 deslanter = Deslanter()
 spellCorrector = SpellCorrector(lexicon="SpellCorrector/lexicon.txt", misclassify="SpellCorrector/misclassify.json")
+tr = TesseractRunner()
 
 @app.route('/', methods=['GET', 'POST'])
 def upload():
@@ -50,20 +52,26 @@ def predict():
 		# Use global var graph otherwise Flask loads new graph for each new request
 		global graph
 		with graph.as_default():
+			# Convert from PIL img to numpy array
 			img = np.array(Image.open(io.BytesIO(request.files['image'].read())).convert('L'))
-			docImg = deslanter.deslant(img)
-			textPreds, lineBoxes = mf.predictDoc(model, segmenter, textDetector, docImg, spellCorrector, \
-											 	 showCrop=False, showChar=False)
-			
+
+			# Get the image filename
 			filename = request.files.getlist("image")[0].filename
 
 			# Copy the image over to static folder so we can display it on the UI
 			shutil.copy(os.path.join('../sample_imgs', filename), os.path.join("static", filename))
 			
+			docImg = deslanter.deslant(img)
 
+			# Handwritten recognition model prediction
+			textPreds, lineBoxes = mf.predictDoc(model, segmenter, textDetector, docImg, spellCorrector, \
+											 	 showCrop=False, showChar=False)
 			pred = output(textPreds, lineBoxes, 'out.hocr', 'out.txt')
 
-			return render_template('predict.html', pred=pred, filename=filename)
+			# Tesseract prediction
+			tesspred = tr.run(docImg)
+
+			return render_template('predict.html', pred=pred, tesspred=tesspred, filename=filename)
 
 	return "Please upload an image"
 

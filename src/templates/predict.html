@@ -10,7 +10,13 @@
 	</p>
 	<img src= "{{url_for('static', filename=filename)}}" alt="Uploaded image" width=800 height=400>
 	<p>	
-		Prediction:
+		<b>Tesseract Prediction:</b>
+	</p>
+	<p>
+		{{tesspred}}
+	</p>
+	<p>	
+		<b>Handwriting Recognition Model Prediction:</b>
 	</p>
 	<p>
 		{{pred}}

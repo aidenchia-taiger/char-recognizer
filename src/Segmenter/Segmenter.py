@@ -4,6 +4,8 @@ import os
 import matplotlib.pyplot as plt
 import pdb
 import argparse
+import sys
+sys.path.append("..")
 from Utils import display, save, is_binary, printInfo, makeDir, percentageBlack
 
 class Segmenter:
@@ -31,7 +33,7 @@ class Segmenter:
         rois = []
         for ctr in contours:
             x, y, w, h = cv2.boundingRect(ctr)
-            roi = img[y:y+h, x:x+w]
+            roi = img[y:y+h+2, x:x+w+2]
             if w*h > minArea:
                 self.numCharacters += 1
                 rois.append(roi)
@@ -39,7 +41,7 @@ class Segmenter:
                     save(roi, name= str(self.numCharacters), prefix='../out/' + write_to_dir, suffix='.png')
 
         #save(img, name='original', prefix='../out/' + img[:-4].split('/')[-1], suffix='.png')
-        print('\n[INFO] No. of Characters Found: {}'.format(self.numCharacters))
+        print('[INFO] No. of Characters Found: {}'.format(self.numCharacters))
         return rois
 
 def main():
